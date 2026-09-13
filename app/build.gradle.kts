@@ -25,6 +25,14 @@ shortcutHelper.setFilePath("./shortcuts.xml")
 android {
     namespace = "eu.kanade.tachiyomi"
 
+    configurations.all {
+        resolutionStrategy {
+            force("androidx.savedstate:savedstate:1.5.0")
+            force("androidx.savedstate:savedstate-ktx:1.5.0")
+            force("androidx.savedstate:savedstate-compose:1.5.0")
+        }
+    }
+
     defaultConfig {
         applicationId = "app.komikku"
 
@@ -113,33 +121,32 @@ android {
         }
     }
 
+    val jniPatterns = listOf(
+        "libandroidx.graphics.path",
+        "libarchive-jni",
+        "libconscrypt_jni",
+        "libimagedecoder",
+        "libquickjs",
+        "libsqlite3x",
+    ).map { "**/$it.so" }
+
+    val resourceExcludes = listOf(
+        "kotlin-tooling-metadata.json",
+        "LICENSE.txt",
+        "META-INF/**/*.properties",
+        "META-INF/**/LICENSE.txt",
+        "META-INF/*.properties",
+        "META-INF/*.version",
+        "META-INF/INDEX.LIST",
+        "META-INF/DEPENDENCIES",
+        "META-INF/LICENSE",
+        "META-INF/NOTICE",
+        "META-INF/README.md",
+    )
+
     packaging {
-        jniLibs {
-            keepDebugSymbols += listOf(
-                "libandroidx.graphics.path",
-                "libarchive-jni",
-                "libconscrypt_jni",
-                "libimagedecoder",
-                "libquickjs",
-                "libsqlite3x",
-            )
-                .map { "**/$it.so" }
-        }
-        resources {
-            excludes += setOf(
-                "kotlin-tooling-metadata.json",
-                "LICENSE.txt",
-                "META-INF/**/*.properties",
-                "META-INF/**/LICENSE.txt",
-                "META-INF/*.properties",
-                "META-INF/*.version",
-                "META-INF/INDEX.LIST",
-                "META-INF/DEPENDENCIES",
-                "META-INF/LICENSE",
-                "META-INF/NOTICE",
-                "META-INF/README.md",
-            )
-        }
+        jniLibs.keepDebugSymbols.addAll(jniPatterns)
+        resources.excludes.addAll(resourceExcludes)
     }
 
     dependenciesInfo {
