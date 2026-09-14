@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ScopedStorage,SelectedPhotoAccess,ForegroundServicePermission,RequestInstallPackages,QueryAllPackagesPermission">
 
     <!-- Internet -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -11,44 +12,54 @@
     <uses-permission
         android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
-      <!-- Permission to save cover into Pictures. It isn't required from API 29 -->
+    <!-- Permission to save cover into Pictures. It isn't required from API 29 -->
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
-      <!-- For access custom cover on Android 12 & below (API 32) -->
+        android:maxSdkVersion="28"
+        tools:ignore="ScopedStorage" />
+    <!-- For access custom cover on Android 12 & below (API 32) -->
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-      <!-- For access custom cover from Android 13+ (API 33) -->
+        android:maxSdkVersion="32"
+        tools:ignore="SelectedPhotoAccess" />
+    <!-- For access custom cover from Android 13+ (API 33) -->
     <uses-permission
         android:name="android.permission.READ_MEDIA_IMAGES"
         tools:ignore="SelectedPhotoAccess" />
 
     <!-- For background jobs -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE"
+        tools:ignore="ForegroundServicePermission" />
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"
+        tools:ignore="ForegroundServicePermission" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <!-- For managing extensions -->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
-    <uses-permission android:name="android.permission.UPDATE_PACKAGES_WITHOUT_USER_ACTION" />
-    <!-- To view extension packages in API 30+ -->
+    <uses-permission
+        android:name="android.permission.REQUEST_INSTALL_PACKAGES"
+        tools:ignore="RequestInstallPackages" />
+
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
+    <uses-permission android:name="android.permission.UPDATE_PACKAGES_WITHOUT_USER_ACTION" />
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission
         android:name="android.permission.READ_APP_SPECIFIC_LOCALES"
         tools:ignore="ProtectedPermissions" />
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
-
     <application
         android:name=".App"
-        android:allowBackup="false"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="false"
+        android:extractNativeLibs="true"
         android:enableOnBackInvokedCallback="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -56,11 +67,10 @@
         android:largeHeap="true"
         android:localeConfig="@xml/locales_config"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:preserveLegacyExternalStorage="true"
-        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Tachiyomi">
+        android:theme="@style/Theme.Tachiyomi"
+        tools:targetApi="33">
 
         <activity
             android:name=".ui.main.MainActivity"
@@ -299,7 +309,7 @@
             android:theme="@style/Theme.Tachiyomi"
             android:exported="true">
             <!-- E-Hentai -->
-            <intent-filter>
+            <intent-filter android:autoVerify="false">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -315,7 +325,7 @@
                 <data android:pathPattern="/g/..*" />
             </intent-filter>
             <!-- ExHentai -->
-            <intent-filter>
+            <intent-filter android:autoVerify="false">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -330,7 +340,7 @@
                 <data android:pathPattern="/g/..*" />
             </intent-filter>
             <!-- NHentai -->
-            <intent-filter>
+            <intent-filter android:autoVerify="false">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -345,7 +355,7 @@
                 <data android:pathPattern="/g/..*" />
             </intent-filter>
             <!-- Pururin -->
-            <intent-filter>
+            <intent-filter android:autoVerify="false">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />

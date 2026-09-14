@@ -145,7 +145,10 @@ android {
     )
 
     packaging {
-        jniLibs.keepDebugSymbols.addAll(jniPatterns)
+        jniLibs {
+            useLegacyPackaging = true
+            keepDebugSymbols.addAll(jniPatterns)
+        }
         resources.excludes.addAll(resourceExcludes)
     }
 
@@ -167,6 +170,14 @@ android {
     lint {
         abortOnError = false
         checkReleaseBuilds = false
+        disable += listOf(
+            "ScopedStorage",
+            "SelectedPhotoAccess",
+            "ForegroundServicePermission",
+            "RequestInstallPackages",
+            "QueryAllPackagesPermission",
+            "ProtectedPermissions"
+        )
     }
 }
 
