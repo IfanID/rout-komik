@@ -176,7 +176,7 @@ android {
             "ForegroundServicePermission",
             "RequestInstallPackages",
             "QueryAllPackagesPermission",
-            "ProtectedPermissions"
+            "ProtectedPermissions",
         )
     }
 }
