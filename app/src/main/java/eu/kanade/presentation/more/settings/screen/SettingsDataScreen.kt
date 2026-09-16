@@ -1,31 +1,56 @@
 package eu.kanade.presentation.more.settings.screen
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Environment
+import android.provider.DocumentsContract
+import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.FolderOpen
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
@@ -39,6 +64,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -203,30 +231,338 @@ object SettingsDataScreen : SearchableSettings {
         } ?: stringResource(MR.strings.invalid_location, storageDir)
     }
 
+    private class OpenDocumentTreeWithHintSettings : ActivityResultContracts.OpenDocumentTree() {
+        override fun createIntent(context: Context, input: Uri?): Intent {
+            val intent = super.createIntent(context, input)
+            input?.let { intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, it) }
+            return intent
+        }
+    }
+
+    private fun createFolderInDocuments(context: Context, folderName: String) {
+        val cleanName = folderName.trim().replace(Regex("[\\\\/:*?\"<>|]"), "_")
+        val contentUri = MediaStore.Files.getContentUri("external")
+        val selection = "${MediaStore.MediaColumns.RELATIVE_PATH} LIKE ? AND ${MediaStore.MediaColumns.DISPLAY_NAME} = ?"
+        val selectionArgs = arrayOf("${Environment.DIRECTORY_DOCUMENTS}/$cleanName%", cleanName)
+
+        try {
+            context.contentResolver.query(contentUri, arrayOf(MediaStore.MediaColumns._ID), selection, selectionArgs, null)?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    Log.d("RoutDebug", "Folder $cleanName terdeteksi sudah ada.")
+                    return
+                }
+            }
+        } catch (_: Exception) { }
+
+        try {
+            val values = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, ".nomedia")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, "${Environment.DIRECTORY_DOCUMENTS}/$cleanName/")
+                put(MediaStore.MediaColumns.IS_PENDING, 1)
+            }
+            val uri = context.contentResolver.insert(contentUri, values)
+            uri?.let {
+                context.contentResolver.delete(it, null, null)
+                Log.d("RoutDebug", "Folder $cleanName berhasil dibuat secara fisik.")
+            }
+        } catch (e: Exception) {
+            Log.e("RoutDebug", "Error saat menyiapkan folder secara fisik", e)
+        }
+    }
+
     @Composable
     private fun getStorageLocationPref(
         storagePreferences: StoragePreferences,
     ): Preference.PreferenceItem.TextPreference {
         val context = LocalContext.current
-        val pickStorageLocation = storageLocationPicker(storagePreferences.baseStorageDirectory())
-
-        // KMK -->
         val storagePref = storagePreferences.baseStorageDirectory()
-        // KMK <--
+        val storageDir by storagePref.collectAsState()
+
+        val currentFile = remember(storageDir) { UniFile.fromUri(context, storageDir.toUri()) }
+        val rootFolderName = currentFile?.name ?: "Rout"
+
+        var showFolderSheet by remember { mutableStateOf(false) }
+        var tempFolderName by remember { mutableStateOf(rootFolderName) }
+        var isEditingFolder by remember { mutableStateOf(false) }
+        var isLocked by remember { mutableStateOf(false) }
+        var showGuideDialog by remember { mutableStateOf(false) }
+
+        LaunchedEffect(rootFolderName) {
+            tempFolderName = rootFolderName
+        }
+
+        val launcher = rememberLauncherForActivityResult(
+            contract = OpenDocumentTreeWithHintSettings(),
+        ) { uri ->
+            if (uri != null) {
+                val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                try {
+                    context.contentResolver.takePersistableUriPermission(uri, flags)
+                } catch (e: SecurityException) {
+                    logcat(LogPriority.ERROR, e)
+                    context.toast(MR.strings.file_picker_uri_permission_unsupported)
+                }
+
+                UniFile.fromUri(context, uri)?.let {
+                    storagePref.set("")
+                    storagePref.set(it.uri.toString())
+                }
+                showFolderSheet = false
+                isLocked = false
+                isEditingFolder = false
+            } else {
+                isLocked = false
+            }
+        }
+
+        if (showGuideDialog) {
+            AlertDialog(
+                onDismissRequest = { },
+                properties = androidx.compose.ui.window.DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
+                icon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Info,
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp),
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+                },
+                title = {
+                    Text(
+                        text = stringResource(KMR.strings.onboarding_storage_permission_dialog_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                },
+                text = {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            text = stringResource(KMR.strings.onboarding_storage_permission_dialog_desc, tempFolderName),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            lineHeight = 22.sp,
+                        )
+
+                        Spacer(modifier = Modifier.height(32.dp))
+
+                        androidx.compose.material3.Button(
+                            onClick = {
+                                Log.d("RoutDebug", "Tombol Select Folder di dialog diklik")
+                                showGuideDialog = false
+                                val hintUri = Uri.parse("content://com.android.externalstorage.documents/document/primary:Documents%2F$tempFolderName")
+                                Log.d("RoutDebug", "Meluncurkan SAF dengan hint: $hintUri")
+                                try {
+                                    launcher.launch(hintUri)
+                                } catch (e: Exception) {
+                                    Log.e("RoutDebug", "Gagal meluncurkan SAF launcher", e)
+                                    context.toast(MR.strings.file_picker_error)
+                                    isLocked = false
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            elevation = androidx.compose.material3.ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
+                        ) {
+                            Text(
+                                text = stringResource(MR.strings.onboarding_storage_action_select),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                            )
+                        }
+                    }
+                },
+                confirmButton = {},
+                shape = RoundedCornerShape(28.dp),
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            )
+        }
+
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+        if (showFolderSheet) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    if (!isLocked) {
+                        showFolderSheet = false
+                        isEditingFolder = false
+                        tempFolderName = rootFolderName
+                    }
+                },
+                sheetState = sheetState,
+                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                dragHandle = { BottomSheetDefaults.DragHandle(color = MaterialTheme.colorScheme.outlineVariant) },
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp)
+                        .padding(top = 8.dp, bottom = 48.dp),
+                    horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+                ) {
+                    Surface(
+                        modifier = Modifier.size(80.dp),
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f),
+                        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)),
+                    ) {
+                        Box(contentAlignment = androidx.compose.ui.Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Rounded.FolderOpen,
+                                contentDescription = null,
+                                modifier = Modifier.size(40.dp),
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Text(
+                        text = stringResource(MR.strings.pref_storage_location),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = stringResource(KMR.strings.onboarding_storage_kmk_info),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                    )
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    Surface(
+                        onClick = { if (!isLocked) isEditingFolder = true },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp),
+                        shape = RoundedCornerShape(28.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        border = BorderStroke(
+                            width = 1.dp,
+                            color = if (isLocked) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                        ),
+                        shadowElevation = if (isLocked) 0.dp else 4.dp,
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = androidx.compose.ui.Alignment.Center,
+                        ) {
+                            if (!isEditingFolder) {
+                                Column(horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally) {
+                                    Text(
+                                        text = if (isLocked) stringResource(KMR.strings.onboarding_storage_folder_name_label_created) else stringResource(KMR.strings.onboarding_storage_folder_name_label),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = if (isLocked) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary,
+                                        letterSpacing = 2.sp,
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Row(
+                                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                                        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+                                        modifier = Modifier.fillMaxWidth(),
+                                    ) {
+                                        Text(
+                                            text = tempFolderName,
+                                            fontSize = 24.sp,
+                                            fontWeight = FontWeight.Black,
+                                            color = if (isLocked) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.onSurface,
+                                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                        )
+                                        if (!isLocked) {
+                                            Spacer(modifier = Modifier.width(12.dp))
+                                            Icon(
+                                                imageVector = Icons.Rounded.Edit,
+                                                contentDescription = "Edit",
+                                                modifier = Modifier.size(20.dp),
+                                                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                                            )
+                                        }
+                                    }
+                                }
+                            } else {
+                                OutlinedTextField(
+                                    value = tempFolderName,
+                                    onValueChange = { tempFolderName = it },
+                                    label = { Text(stringResource(KMR.strings.onboarding_storage_folder_name_hint)) },
+                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                                    singleLine = true,
+                                    textStyle = MaterialTheme.typography.bodyLarge.copy(
+                                        fontWeight = FontWeight.Bold,
+                                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                    ),
+                                    shape = RoundedCornerShape(20.dp),
+                                    trailingIcon = {
+                                        IconButton(onClick = { if (tempFolderName.isNotBlank()) isEditingFolder = false }) {
+                                            Icon(
+                                                imageVector = Icons.Rounded.Check,
+                                                contentDescription = stringResource(MR.strings.action_ok),
+                                                tint = MaterialTheme.colorScheme.primary,
+                                            )
+                                        }
+                                    },
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(40.dp))
+
+                    Button(
+                        onClick = {
+                            val cleanName = tempFolderName.trim()
+                            if (cleanName.isNotBlank()) {
+                                if (cleanName == rootFolderName) {
+                                    showFolderSheet = false
+                                    return@Button
+                                }
+
+                                isLocked = true
+                                val success = currentFile?.renameTo(cleanName) == true
+                                if (success) {
+                                    showGuideDialog = true
+                                } else {
+                                    createFolderInDocuments(context, cleanName)
+                                    showGuideDialog = true
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        enabled = !isLocked,
+                        shape = RoundedCornerShape(16.dp),
+                        elevation = androidx.compose.material3.ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
+                    ) {
+                        Text(
+                            text = stringResource(MR.strings.action_save),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                }
+            }
+        }
 
         return Preference.PreferenceItem.TextPreference(
             title = stringResource(MR.strings.pref_storage_location),
-            subtitle = storageLocationText(/* KMK --> */storagePref/* KMK <-- */),
+            subtitle = storageLocationText(storagePref),
             onClick = {
-                try {
-                    // KMK -->
-                    allowAccessStorage(context, storagePref) {
-                        // KMK <--
-                        pickStorageLocation.launch(null)
-                    }
-                } catch (_: Exception) {
-                    context.toast(MR.strings.file_picker_error)
-                }
+                tempFolderName = rootFolderName
+                showFolderSheet = true
             },
         )
     }

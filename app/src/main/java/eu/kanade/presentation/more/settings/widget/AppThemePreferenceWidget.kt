@@ -82,44 +82,56 @@ private fun AppThemesList(
         AppTheme.entries
             .filterNot { it.titleRes == null }
     }
-    LazyRow(
-        contentPadding = PaddingValues(horizontal = PrefsHorizontalPadding),
-        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = PrefsHorizontalPadding),
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
     ) {
-        items(
-            items = appThemes,
-            key = { "theme-${it.name}" },
-        ) { appTheme ->
-            Column(
-                modifier = Modifier
-                    .width(114.dp)
-                    .padding(top = 8.dp),
+        val chunks = appThemes.chunked(4)
+        chunks.forEach { rowThemes ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
             ) {
-                TachiyomiTheme(
-                    appTheme = appTheme,
-                    amoled = amoled,
-                ) {
-                    AppThemePreviewItem(
-                        selected = currentTheme == appTheme,
-                        onClick = {
-                            onItemClick(appTheme)
-                            (context as? Activity)?.let { ActivityCompat.recreate(it) }
-                        },
-                    )
+                rowThemes.forEach { appTheme ->
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(top = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        TachiyomiTheme(
+                            appTheme = appTheme,
+                            amoled = amoled,
+                        ) {
+                            AppThemePreviewItem(
+                                selected = currentTheme == appTheme,
+                                onClick = {
+                                    onItemClick(appTheme)
+                                    (context as? Activity)?.let { ActivityCompat.recreate(it) }
+                                },
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = stringResource(appTheme.titleRes!!),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .secondaryItemAlpha(),
+                            textAlign = TextAlign.Center,
+                            maxLines = 2,
+                            minLines = 2,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
                 }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = stringResource(appTheme.titleRes!!),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .secondaryItemAlpha(),
-                    textAlign = TextAlign.Center,
-                    maxLines = 2,
-                    minLines = 2,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+                if (rowThemes.size < 4) {
+                    Spacer(modifier = Modifier.weight((4 - rowThemes.size).toFloat()))
+                }
             }
         }
     }

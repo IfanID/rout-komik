@@ -1,15 +1,15 @@
 package eu.kanade.presentation.more
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import eu.kanade.tachiyomi.R
@@ -20,14 +20,16 @@ fun LogoHeader() {
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_komikku),
+        // KMK -->
+        Image(
+            painter = painterResource(R.drawable.rout_transparan),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface,
+            contentScale = ContentScale.Fit,
             modifier = Modifier
-                .padding(vertical = 56.dp)
-                .size(64.dp),
+                .padding(vertical = 48.dp)
+                .height(80.dp),
         )
+        // KMK <--
 
         HorizontalDivider()
     }

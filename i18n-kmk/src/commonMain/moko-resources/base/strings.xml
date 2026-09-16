@@ -139,12 +139,12 @@
     <string name="auto_update_app">Auto-update app</string>
     <string name="auto_update_app_disable_auto_download">Don't auto download update</string>
     <!-- Onboarding section -->
-    <string name="onboarding_storage_kmk_info">Pilih nama folder untuk menyimpan data aplikasi. Folder ini akan dibuat di dalam direktori Documents perangkat Anda.</string>
-    <string name="onboarding_storage_folder_name_label">NAMA FOLDER</string>
-    <string name="onboarding_storage_folder_name_label_created">FOLDER DISIAPKAN</string>
-    <string name="onboarding_storage_folder_name_hint">Masukkan nama folder</string>
-    <string name="onboarding_storage_permission_dialog_title">Izin Diperlukan</string>
-    <string name="onboarding_storage_permission_dialog_desc">Untuk menyimpan data, Anda perlu memberikan izin akses ke folder \"%1$s\" yang baru saja dibuat di direktori Documents.</string>
+    <string name="onboarding_storage_kmk_info">Select a folder name to store app data. This folder will be created inside your device\'s Documents directory.</string>
+    <string name="onboarding_storage_folder_name_label">FOLDER NAME</string>
+    <string name="onboarding_storage_folder_name_label_created">FOLDER PREPARED</string>
+    <string name="onboarding_storage_folder_name_hint">Enter folder name</string>
+    <string name="onboarding_storage_permission_dialog_title">Permission Required</string>
+    <string name="onboarding_storage_permission_dialog_desc">To store data, you need to grant access permission to the \"%1$s\" folder recently created in the Documents directory.</string>
     <string name="onboarding_permission_external_storage">Access media files permission</string>
     <string name="onboarding_permission_external_storage_description">Allow using custom covers in entry's Edit Info</string>
     <string name="onboarding_permission_writing_external_storage_description">Allow saving covers &amp; using custom covers in entry's Edit Info</string>
