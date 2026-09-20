@@ -9,6 +9,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.kanade.domain.base.BasePreferences
+import eu.kanade.domain.chapter.interactor.SetReadStatus
 import eu.kanade.domain.chapter.model.toDbChapter
 import eu.kanade.domain.manga.interactor.SetMangaViewerFlags
 import eu.kanade.domain.manga.model.readerOrientation
@@ -19,6 +20,7 @@ import eu.kanade.domain.track.interactor.TrackChapter
 import eu.kanade.domain.track.service.TrackPreferences
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.presentation.manga.components.ChapterDownloadAction
+import eu.kanade.tachiyomi.data.database.models.isRecognizedNumber
 import eu.kanade.tachiyomi.data.database.models.toDomainChapter
 import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.data.download.DownloadProvider
@@ -129,6 +131,7 @@ class ReaderViewModel @JvmOverloads constructor(
     private val updateChapter: UpdateChapter = Injekt.get(),
     private val setMangaViewerFlags: SetMangaViewerFlags = Injekt.get(),
     private val getIncognitoState: GetIncognitoState = Injekt.get(),
+    private val setReadStatus: SetReadStatus = Injekt.get(),
     private val libraryPreferences: LibraryPreferences = Injekt.get(),
     // SY -->
     private val syncPreferences: SyncPreferences = Injekt.get(),
@@ -328,7 +331,7 @@ class ReaderViewModel @JvmOverloads constructor(
         chaptersForReader
             .sortedWith(getChapterSort(manga, sortDescending = false))
             .run {
-                if (readerPreferences.skipDupe().get()) {
+                if (readerPreferences.skipDupe().get() || manga.source == MERGED_SOURCE_ID) {
                     removeDuplicates(selectedChapter)
                 } else {
                     this
@@ -535,6 +538,17 @@ class ReaderViewModel @JvmOverloads constructor(
         page: Int? = null,
         // SY <--
     ): ViewerChapters {
+        // KMK -->
+        chapter.chapter.manga_id?.let { mangaId ->
+            val mangaList = state.value.mergedManga
+            val sourceId = mangaList?.get(mangaId)?.source ?: manga?.source
+            if (sourceId != null) {
+                val sourceName = sourceManager.getOrStub(sourceId).name
+                val scanlator = chapter.chapter.scanlator?.let { " ($it)" } ?: ""
+                logcat(LogPriority.DEBUG) { "[RoutDebug] Membuka bab ${chapter.chapter.chapter_number} dari situs $sourceName$scanlator (ID: $mangaId, URL: ${chapter.chapter.url})" }
+            }
+        }
+        // KMK <--
         loader.loadChapter(chapter /* SY --> */, page/* SY <-- */)
 
         val chapterPos = chapterList.indexOf(chapter)
@@ -692,6 +706,26 @@ class ReaderViewModel @JvmOverloads constructor(
         }
 
         if (selectedChapter != getCurrentChapter()) {
+            // KMK -->
+            if (readerPreferences.skipRead().get() && selectedChapter.chapter.read) {
+                val nextUnread = chapterList.dropWhile { it != selectedChapter }.find { !it.chapter.read }
+                if (nextUnread != null && nextUnread != selectedChapter) {
+                    logcat(LogPriority.DEBUG) { "[RoutDebug] Melompati bab ${selectedChapter.chapter.chapter_number} karena sudah dibaca (ID: ${selectedChapter.chapter.id})" }
+                    loadNewChapter(nextUnread)
+                    return
+                }
+            }
+
+            selectedChapter.chapter.manga_id?.let { mangaId ->
+                val mangaList = state.value.mergedManga
+                val sourceId = mangaList?.get(mangaId)?.source ?: manga?.source
+                if (sourceId != null) {
+                    val sourceName = sourceManager.getOrStub(sourceId).name
+                    val scanlator = selectedChapter.chapter.scanlator?.let { " ($it)" } ?: ""
+                    logcat(LogPriority.DEBUG) { "[RoutDebug] Berpindah otomatis ke bab ${selectedChapter.chapter.chapter_number} dari situs $sourceName$scanlator (Triggered by scroll, URL: ${selectedChapter.chapter.url})" }
+                }
+            }
+            // KMK <--
             logcat { "Setting ${selectedChapter.chapter.url} as active" }
             loadNewChapter(selectedChapter)
         }
@@ -847,6 +881,28 @@ class ReaderViewModel @JvmOverloads constructor(
                 ),
             )
 
+            // KMK -->
+            if (manga?.source == MERGED_SOURCE_ID) {
+                chapterList.filter {
+                    it.chapter.manga_id != readerChapter.chapter.manga_id &&
+                        it.chapter.isRecognizedNumber &&
+                        it.chapter.chapter_number == readerChapter.chapter.chapter_number &&
+                        it.chapter.last_page_read != pageIndex &&
+                        !it.chapter.read
+                }.forEach {
+                    it.chapter.last_page_read = pageIndex
+                }
+
+                readerChapter.chapter.manga_id?.let { mangaId ->
+                    setReadStatus.awaitProgressSync(
+                        mangaId = mangaId,
+                        chapterNumber = readerChapter.chapter.chapter_number.toDouble(),
+                        lastPageRead = readerChapter.chapter.last_page_read.toLong(),
+                    )
+                }
+            }
+            // KMK <--
+
             // SY -->
             // Check if syncing is enabled for chapter open:
             if (isSyncEnabled && syncTriggerOpt.syncOnChapterOpen && readerChapter.chapter.last_page_read == 0) {
@@ -857,16 +913,35 @@ class ReaderViewModel @JvmOverloads constructor(
     }
 
     private suspend fun updateChapterProgressOnComplete(readerChapter: ReaderChapter) {
-        readerChapter.chapter.read = true
         // SY -->
+        val domainChapter = readerChapter.chapter.toDomainChapter()
+        if (domainChapter != null && !domainChapter.read) {
+            setReadStatus.await(read = true, manually = false, chapters = arrayOf(domainChapter))
+        }
+        // SY <--
+        readerChapter.chapter.read = true
+
+        // KMK -->
+        if (manga?.source == MERGED_SOURCE_ID) {
+            chapterList.filter {
+                it.chapter.manga_id != readerChapter.chapter.manga_id &&
+                    it.chapter.isRecognizedNumber &&
+                    it.chapter.chapter_number == readerChapter.chapter.chapter_number &&
+                    !it.chapter.read
+            }.forEach {
+                it.chapter.read = true
+                logcat(LogPriority.DEBUG) { "[RoutDebug] Memberitahu Reader: Bab ${it.chapter.chapter_number} dari situs lain juga sudah tamat" }
+            }
+        }
+        // KMK <--
+
         if (manga?.isEhBasedManga() == true) {
             viewModelScope.launchNonCancellable {
-                val chapterUpdates = unfilteredChapterList
-                    .filter { it.sourceOrder > readerChapter.chapter.source_order }
-                    .map { chapter ->
-                        ChapterUpdate(id = chapter.id, read = true)
-                    }
-                updateChapter.awaitAll(chapterUpdates)
+                val previousChapters = unfilteredChapterList
+                    .filter { it.sourceOrder > readerChapter.chapter.source_order && !it.read }
+                if (previousChapters.isNotEmpty()) {
+                    setReadStatus.await(read = true, manually = false, chapters = previousChapters.toTypedArray())
+                }
             }
         }
         // SY <--

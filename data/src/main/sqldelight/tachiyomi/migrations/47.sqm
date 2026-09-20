@@ -1,4 +1,6 @@
--- NOTE: must update MERGED_SOURCE_ID (6969) here
+-- Refresh libraryView to hide children mangas from library
+DROP VIEW IF EXISTS libraryView;
+
 CREATE VIEW libraryView AS
 SELECT
     M.*,
@@ -8,9 +10,7 @@ SELECT
     coalesce(C.fetchedAt, 0) AS chapterFetchedAt,
     coalesce(C.lastRead, 0) AS lastRead,
     coalesce(C.bookmarkCount, 0) AS bookmarkCount,
-    -- KMK -->
     coalesce(C.bookmarkReadCount, 0) AS bookmarkedReadCount,
-    -- KMK <--
     coalesce(MC.categories, '0') AS categories
 FROM mangas M
 LEFT JOIN (
@@ -22,9 +22,7 @@ LEFT JOIN (
         coalesce(max(history.last_read), 0) AS lastRead,
         coalesce(max(chapters.date_fetch), 0) AS fetchedAt,
         sum(chapters.bookmark) AS bookmarkCount,
-        -- KMK -->
         sum(CASE WHEN chapters.bookmark = 1 AND chapters.read = 1 THEN 1 ELSE 0 END) AS bookmarkReadCount,
-        -- KMK <--
         excluded_scanlators.scanlator AS ex_scanlator
     FROM chapters
     LEFT JOIN excluded_scanlators
@@ -61,9 +59,7 @@ SELECT
     coalesce(C.fetchedAt, 0) AS chapterFetchedAt,
     coalesce(C.lastRead, 0) AS lastRead,
     coalesce(C.bookmarkCount, 0) AS bookmarkCount,
-    -- KMK -->
     coalesce(C.bookmarkReadCount, 0) AS bookmarkedReadCount,
-    -- KMK <--
     coalesce(MC.categories, '0') AS categories
 FROM mangas M
 LEFT JOIN (
@@ -81,9 +77,7 @@ LEFT JOIN(
         coalesce(max(history.last_read), 0) AS lastRead,
         coalesce(max(chapters.date_fetch), 0) AS fetchedAt,
         count(DISTINCT CASE WHEN chapters.bookmark = 1 THEN chapters.chapter_number END) AS bookmarkCount,
-        -- KMK -->
         count(DISTINCT CASE WHEN chapters.bookmark = 1 AND chapters.read = 1 THEN chapters.chapter_number END) AS bookmarkReadCount,
-        -- KMK <--
         excluded_scanlators.scanlator AS ex_scanlator
     FROM chapters
     LEFT JOIN excluded_scanlators
@@ -96,7 +90,7 @@ LEFT JOIN(
     WHERE ex_scanlator IS NULL
     GROUP BY ME.merge_id
 ) AS C
-ON M._id = C.merge_id  -- ON ME.merge_id = C.merge_id
+ON M._id = C.merge_id
 LEFT JOIN (
     SELECT manga_id, group_concat(category_id) AS categories
     FROM mangas_categories
@@ -104,13 +98,3 @@ LEFT JOIN (
 ) AS MC
 ON MC.manga_id = M._id
 WHERE M.source = 6969;
-
-library:
-SELECT *
-FROM libraryView
-WHERE libraryView.favorite = 1;
-
-readMangaNonLibrary:
-SELECT *
-FROM libraryView
-WHERE libraryView.favorite = 0 AND libraryView.readCount != 0;

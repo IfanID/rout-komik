@@ -82,6 +82,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.runBlocking
+import logcat.LogPriority
 import mihon.core.common.utils.mutate
 import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.core.common.preference.CheckboxState
@@ -90,6 +91,7 @@ import tachiyomi.core.common.util.lang.compareToWithCollator
 import tachiyomi.core.common.util.lang.launchIO
 import tachiyomi.core.common.util.lang.launchNonCancellable
 import tachiyomi.core.common.util.lang.withIOContext
+import tachiyomi.core.common.util.system.logcat
 import tachiyomi.domain.category.interactor.GetCategories
 import tachiyomi.domain.category.interactor.SetMangaCategories
 import tachiyomi.domain.category.model.Category
@@ -1653,10 +1655,14 @@ class LibraryScreenModel(
         val toMergeMangas = mergedManga + mergingMangas
         if (toMergeMangas.size <= 1) return null
 
+        logcat(LogPriority.DEBUG) { "[RoutDebug] Memulai proses penggabungan untuk ${toMergeMangas.size} komik. Komik target utama: ${toMergeMangas.first().title}" }
+
         var mergingMangaId = toMergeMangas.first().id
         for (manga in toMergeMangas.drop(1)) {
             mergingMangaId = smartSearchMerge.smartSearchMerge(manga, mergingMangaId).id
         }
+
+        logcat(LogPriority.DEBUG) { "[RoutDebug] Proses penggabungan berhasil diselesaikan sepenuhnya." }
         return mergingMangaId
     }
     // KMK <--

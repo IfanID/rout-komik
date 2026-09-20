@@ -384,6 +384,7 @@ open class BrowseSourceScreenModel(
 
             updateManga.await(new.toMangaUpdate())
             // KMK -->
+            logcat(tag = "RoutDebug") { "Status favorit komik '${manga.title}' (${source.name}) diubah menjadi ${new.favorite} dari Jelajah" }
             val fetchMetadataOnAdd = libraryPreferences.fetchMetadataOnAdd().get()
             val fetchChaptersOnAdd = libraryPreferences.fetchChaptersOnAdd().get()
             if (new.favorite && (fetchMetadataOnAdd || fetchChaptersOnAdd)) {

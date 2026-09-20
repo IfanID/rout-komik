@@ -33,6 +33,10 @@ class MangaMergeRepositoryImpl(
         return handler.awaitList { mergedQueries.selectByMergeId(id, MergedMangaMapper::map) }
     }
 
+    override suspend fun getReferencesByMangaId(mangaId: Long): List<MergedMangaReference> {
+        return handler.awaitList { mergedQueries.selectByMangaId(mangaId, MergedMangaMapper::map) }
+    }
+
     override suspend fun subscribeReferencesById(id: Long): Flow<List<MergedMangaReference>> {
         return handler.subscribeToList { mergedQueries.selectByMergeId(id, MergedMangaMapper::map) }
     }

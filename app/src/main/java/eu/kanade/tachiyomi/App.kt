@@ -79,7 +79,6 @@ import exh.log.xLogD
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import logcat.AndroidLogcatLogger
 import logcat.LogPriority
 import logcat.LogcatLogger
 import mihon.core.migration.Migrator
@@ -149,17 +148,10 @@ class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factor
 
         setupExhLogging() // EXH logging
         if (!LogcatLogger.isInstalled) {
-            val minLogPriority = when {
-                // KMK -->
-                EHLogLevel.isExtraLogging() -> LogPriority.VERBOSE
-                // KMK <--
-                BuildConfig.DEBUG -> LogPriority.DEBUG
-                else -> LogPriority.INFO
-            }
             LogcatLogger.install()
-            LogcatLogger.loggers += XLogLogcatLogger() // SY Redirect Logcat to XLog
-            LogcatLogger.loggers += AndroidLogcatLogger(minLogPriority)
         }
+        LogcatLogger.loggers.clear()
+        LogcatLogger.loggers += XLogLogcatLogger() // SY Redirect Logcat to XLog
 
         setupNotificationChannels()
 

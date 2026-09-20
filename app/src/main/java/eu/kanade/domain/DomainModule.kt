@@ -134,7 +134,7 @@ class DomainModule : InjektModule {
         addFactory { FetchInterval(get()) }
         addFactory { SetMangaDefaultChapterFlags(get(), get(), get()) }
         addFactory { SetMangaViewerFlags(get()) }
-        addFactory { NetworkToLocalManga(get()) }
+        addFactory { NetworkToLocalManga(get(), get()) }
         addFactory { UpdateManga(get(), get()) }
         addFactory { UpdateMangaNotes(get()) }
         addFactory { SetMangaCategories(get()) }
@@ -165,7 +165,7 @@ class DomainModule : InjektModule {
         addFactory { GetBookmarkedChaptersByMangaId(get(), get(), get()) }
         addFactory { GetChapterByUrlAndMangaId(get()) }
         addFactory { UpdateChapter(get()) }
-        addFactory { SetReadStatus(get(), get(), get(), get(), get()) }
+        addFactory { SetReadStatus(get(), get(), get(), get(), get(), get(), get()) }
         addFactory { ShouldUpdateDbChapter() }
         addFactory { SyncChaptersWithSource(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
         addFactory { GetAvailableScanlators(get()) }

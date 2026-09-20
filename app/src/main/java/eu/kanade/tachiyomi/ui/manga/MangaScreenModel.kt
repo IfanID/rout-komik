@@ -249,7 +249,7 @@ class MangaScreenModel(
         get() = successState?.source
 
     private val isFavorited: Boolean
-        get() = manga?.favorite ?: false
+        get() = manga?.favorite == true || successState?.mergedData != null
 
     private val allChapters: List<ChapterList.Item>?
         get() = successState?.chapters
@@ -433,7 +433,7 @@ class MangaScreenModel(
             val manga = getMangaAndChapters.awaitManga(mangaId)
 
             // SY -->
-            val mergedData = getMergedReferencesById.await(mangaId).takeIf { it.isNotEmpty() }?.let { references ->
+            var mergedData = getMergedReferencesById.await(mangaId).takeIf { it.isNotEmpty() }?.let { references ->
                 MergedMangaData(
                     references,
                     getMergedMangaById.await(mangaId).associateBy { it.id },
@@ -441,6 +441,23 @@ class MangaScreenModel(
                         .map { sourceManager.getOrStub(it) },
                 )
             }
+            if (mergedData == null) {
+                mergedData = getMergedReferencesById.awaitByMangaId(mangaId).takeIf { it.isNotEmpty() }?.let { references ->
+                    val mergeId = references.firstOrNull { it.mergeId != null }?.mergeId
+                    val mergeManga = mergeId?.let { getManga.await(it) }
+                    if (mergeManga?.favorite == true) {
+                        MergedMangaData(
+                            references,
+                            getMergedMangaById.await(mergeId!!).associateBy { it.id },
+                            references.map { it.mangaSourceId }.distinct()
+                                .map { sourceManager.getOrStub(it) },
+                        )
+                    } else {
+                        null
+                    }
+                }
+            }
+            // SY <--
             val chapters = if (manga.source == MERGED_SOURCE_ID) {
                 getMergedChaptersByMangaId.await(mangaId, applyFilter = true)
             } else {
@@ -778,6 +795,12 @@ class MangaScreenModel(
 
     fun deleteMerge(reference: MergedMangaReference) {
         screenModelScope.launchNonCancellable {
+            // SY -->
+            reference.mangaId?.let { childId ->
+                updateManga.awaitUpdateFavorite(childId, true)
+                logcat(LogPriority.DEBUG) { "[RoutDebug] Memulihkan status favorit komik anak (ID: $childId) setelah menghapus referensi penggabungannya" }
+            }
+            // SY <--
             deleteMergeById.await(reference.id)
         }
     }
@@ -815,8 +838,21 @@ class MangaScreenModel(
             val manga = state.manga
 
             if (isFavorited) {
+                // SY -->
+                if (manga.source == MERGED_SOURCE_ID) {
+                    val references = getMergedReferencesById.await(manga.id)
+                    references.forEach { reference ->
+                        reference.mangaId?.let { childId ->
+                            updateManga.awaitUpdateFavorite(childId, true)
+                            logcat(LogPriority.DEBUG) { "[RoutDebug] Memulihkan status favorit komik anak (ID: $childId) setelah menghapus favorit komik gabungan ${manga.id}" }
+                        }
+                    }
+                }
+                // SY <--
                 // Remove from library
                 if (updateManga.awaitUpdateFavorite(manga.id, false)) {
+                    val sourceName = sourceManager.getOrStub(manga.source).name
+                    logcat(LogPriority.DEBUG) { "[RoutDebug] Komik '${manga.title}' ($sourceName) dihapus dari pustaka melalui Detail" }
                     // Remove covers and update last modified in db
                     if (manga.removeCovers() != manga) {
                         updateManga.awaitUpdateCoverLastModified(manga.id)
@@ -824,7 +860,6 @@ class MangaScreenModel(
                     withUIContext { onRemoved() }
                 }
             } else {
-                // Add to library
                 // First, check if duplicate exists if callback is provided
                 if (checkDuplicate) {
                     val duplicates = getDuplicateLibraryManga(manga)
@@ -842,6 +877,8 @@ class MangaScreenModel(
                 when {
                     // Default category set
                     defaultCategory != null -> {
+                        val sourceName = sourceManager.getOrStub(manga.source).name
+                        logcat(LogPriority.DEBUG) { "[RoutDebug] Menambahkan komik '${manga.title}' ($sourceName) ke pustaka melalui Detail" }
                         val result = updateManga.awaitUpdateFavorite(manga.id, true)
                         if (!result) return@launchIO
                         moveMangaToCategory(defaultCategory)
@@ -849,6 +886,8 @@ class MangaScreenModel(
 
                     // Automatic 'Default' or no categories
                     defaultCategoryId == 0L || categories.isEmpty() -> {
+                        val sourceName = sourceManager.getOrStub(manga.source).name
+                        logcat(LogPriority.DEBUG) { "[RoutDebug] Menambahkan komik '${manga.title}' ($sourceName) ke pustaka melalui Detail" }
                         val result = updateManga.awaitUpdateFavorite(manga.id, true)
                         if (!result) return@launchIO
                         moveMangaToCategory(null)
@@ -975,6 +1014,8 @@ class MangaScreenModel(
         if (manga.favorite) return
 
         screenModelScope.launchIO {
+            val sourceName = sourceManager.getOrStub(manga.source).name
+            logcat(LogPriority.DEBUG) { "[RoutDebug] Menambahkan komik '${manga.title}' ($sourceName) ke pustaka melalui Detail (Duplikat dikonfirmasi)" }
             updateManga.awaitUpdateFavorite(manga.id, true)
         }
     }

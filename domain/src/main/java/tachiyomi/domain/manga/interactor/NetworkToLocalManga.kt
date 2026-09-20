@@ -1,10 +1,12 @@
 package tachiyomi.domain.manga.interactor
 
 import tachiyomi.domain.manga.model.Manga
+import tachiyomi.domain.manga.repository.MangaMergeRepository
 import tachiyomi.domain.manga.repository.MangaRepository
 
 class NetworkToLocalManga(
     private val mangaRepository: MangaRepository,
+    private val mangaMergeRepository: MangaMergeRepository,
 ) {
 
     /**
@@ -37,11 +39,23 @@ class NetworkToLocalManga(
         updateInfo: Boolean = true,
         // KMK <--
     ): List<Manga> {
-        return mangaRepository.insertNetworkManga(
+        val inserted = mangaRepository.insertNetworkManga(
             manga,
             // KMK -->
             updateInfo,
             // KMK <--
         )
+        // SY -->
+        return inserted.map { m ->
+            if (m.favorite) return@map m
+            val mergeId = mangaMergeRepository.getReferencesByMangaId(m.id).firstOrNull()?.mergeId
+            val mergeManga = mergeId?.let { mangaRepository.getMangaById(it) }
+            if (mergeManga?.favorite == true) {
+                m.copy(favorite = true)
+            } else {
+                m
+            }
+        }
+        // SY <--
     }
 }

@@ -26,6 +26,9 @@ SELECT * FROM merged WHERE merge_id = ?;
 selectByMergeUrl:
 SELECT * FROM merged WHERE merge_url = ?;
 
+selectByMangaId:
+SELECT * FROM merged WHERE manga_id = ?;
+
 deleteByMergeId:
 DELETE FROM merged WHERE merge_id = ?;
 

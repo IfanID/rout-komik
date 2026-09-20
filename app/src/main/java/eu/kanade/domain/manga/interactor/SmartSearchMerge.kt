@@ -4,8 +4,10 @@ import android.app.Application
 import eu.kanade.domain.manga.model.copyFrom
 import eu.kanade.domain.manga.model.toSManga
 import exh.source.MERGED_SOURCE_ID
+import logcat.LogPriority
 import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.core.common.util.lang.withNonCancellableContext
+import tachiyomi.core.common.util.system.logcat
 import tachiyomi.domain.category.interactor.GetCategories
 import tachiyomi.domain.category.interactor.SetMangaCategories
 import tachiyomi.domain.manga.interactor.DeleteByMergeId
@@ -29,6 +31,7 @@ class SmartSearchMerge(
     private val deleteByMergeId: DeleteByMergeId = Injekt.get(),
     private val getCategories: GetCategories = Injekt.get(),
     private val setMangaCategories: SetMangaCategories = Injekt.get(),
+    private val sourceManager: tachiyomi.domain.source.service.SourceManager = Injekt.get(),
 ) {
     /**
      * @param originalMangaId ID of the existed merged entry or the original manga which will be used to create the new merged entry
@@ -40,6 +43,12 @@ class SmartSearchMerge(
         // KMK <--
         val originalManga = getManga.await(originalMangaId)
             ?: throw IllegalArgumentException(context.stringResource(SYMR.strings.merge_unknown_entry, originalMangaId))
+
+        // KMK -->
+        val originalSourceName = sourceManager.getOrStub(originalManga.source).name
+        val newSourceName = sourceManager.getOrStub(manga.source).name
+        logcat(LogPriority.DEBUG) { "[RoutDebug] Interactor: Memulai smartSearchMerge untuk '${manga.title}' ($newSourceName) ke target '${originalManga.title}' ($originalSourceName)" }
+        // KMK <--
         if (originalManga.source == MERGED_SOURCE_ID) {
             val children = getMergedReferencesById.await(originalMangaId)
             if (children.any { it.mangaSourceId == manga.source && it.mangaUrl == manga.url }) {
@@ -81,6 +90,12 @@ class SmartSearchMerge(
 
             // todo
             insertMergedReference.awaitAll(mangaReferences)
+
+            // KMK -->
+            val originalSourceName = sourceManager.getOrStub(originalManga.source).name
+            val newSourceName = sourceManager.getOrStub(manga.source).name
+            logcat(LogPriority.DEBUG) { "[RoutDebug] Menambahkan komik '${manga.title}' ($newSourceName) (ID: ${manga.id}) ke entri gabungan yang sudah ada '${originalManga.title}' ($originalSourceName) (ID: ${originalManga.id})" }
+            // KMK <--
 
             return originalManga
         } else {
@@ -171,6 +186,12 @@ class SmartSearchMerge(
             )
 
             insertMergedReference.awaitAll(listOf(originalMangaReference, newMangaReference, mergedMangaReference))
+
+            // KMK -->
+            val originalSourceName = sourceManager.getOrStub(originalManga.source).name
+            val newSourceName = sourceManager.getOrStub(manga.source).name
+            logcat(LogPriority.DEBUG) { "[RoutDebug] Berhasil menggabungkan '${originalManga.title}' ($originalSourceName) dan '${manga.title}' ($newSourceName) ke dalam entri baru '${mergedManga.title}' (ID: ${mergedManga.id})" }
+            // KMK <--
 
             return mergedManga
         }

@@ -9,6 +9,7 @@ fun List<Chapter>.removeDuplicates(currentChapter: Chapter): List<Chapter> {
     return groupBy { it.chapterNumber }
         .map { (_, chapters) ->
             chapters.find { it.id == currentChapter.id }
+                ?: chapters.find { it.mangaId == currentChapter.mangaId } // Source sticking
                 ?: chapters.find { it.scanlator == currentChapter.scanlator }
                 ?: chapters.first()
         }

@@ -15,6 +15,7 @@ import tachiyomi.domain.chapter.model.Chapter
 import tachiyomi.domain.chapter.model.ChapterUpdate
 import tachiyomi.domain.chapter.repository.ChapterRepository
 import tachiyomi.domain.download.service.DownloadPreferences
+import tachiyomi.domain.manga.interactor.GetMergedReferencesById
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.domain.manga.repository.MangaRepository
 
@@ -25,6 +26,8 @@ class SetReadStatus(
     private val chapterRepository: ChapterRepository,
     // SY -->
     private val getMergedChaptersByMangaId: GetMergedChaptersByMangaId,
+    private val getMergedReferencesById: GetMergedReferencesById,
+    private val sourceManager: tachiyomi.domain.source.service.SourceManager,
     // SY <--
 ) {
 
@@ -66,9 +69,40 @@ class SetReadStatus(
             return@withNonCancellableContext Result.NoChapters
         }
 
+        // SY -->
+        val extraChapters = mutableListOf<Chapter>()
+        val chaptersByManga = chaptersToUpdate.groupBy { it.mangaId }
+        for ((mangaId, mangaChapters) in chaptersByManga) {
+            val references = getMergedReferencesById.awaitByMangaId(mangaId)
+            val mergeId = references.firstOrNull { it.mangaId == mangaId }?.mergeId ?: continue
+
+            val allSiblingChapters = getMergedChaptersByMangaId.await(mergeId, dedupe = false)
+            for (chapter in mangaChapters) {
+                val siblings = allSiblingChapters.filter { sibling ->
+                    sibling.mangaId != mangaId &&
+                        sibling.isRecognizedNumber &&
+                        chapter.isRecognizedNumber &&
+                        sibling.chapterNumber == chapter.chapterNumber &&
+                        when (read) {
+                            true -> !sibling.read
+                            false -> sibling.read || sibling.lastPageRead > 0
+                        }
+                }
+                if (siblings.isNotEmpty()) {
+                    val manga = mangaRepository.getMangaById(mangaId)
+                    val source = sourceManager.get(manga.source)
+                    val sourceName = source?.name ?: "Situs ${manga.source}"
+                    logcat(LogPriority.DEBUG) { "[RoutDebug] Sinkronisasi status baca ($read) untuk bab ${chapter.chapterNumber} dari situs '$sourceName' ke ${siblings.size} sumber lainnya dalam penggabungan $mergeId" }
+                    extraChapters.addAll(siblings)
+                }
+            }
+        }
+        val allChaptersToUpdate = (chaptersToUpdate + extraChapters).distinctBy { it.id }
+        // SY <--
+
         try {
             chapterRepository.updateAll(
-                chaptersToUpdate.map { mapper(it, read) },
+                allChaptersToUpdate.map { mapper(it, read) },
             )
         } catch (e: Exception) {
             logcat(LogPriority.ERROR, e)
@@ -82,7 +116,7 @@ class SetReadStatus(
             read &&
             downloadPreferences.removeAfterMarkedAsRead().get()
         ) {
-            chaptersToUpdate
+            allChaptersToUpdate
                 // KMK -->
                 .map { it.copy(read = true) } // mark as read so it will respect category exclusion
                 // KMK <--
@@ -123,6 +157,47 @@ class SetReadStatus(
         await(manga.id, read)
     }
     // SY <--
+
+    // KMK -->
+    suspend fun awaitProgressSync(
+        mangaId: Long,
+        chapterNumber: Double,
+        lastPageRead: Long,
+    ): Result = withNonCancellableContext {
+        val references = getMergedReferencesById.awaitByMangaId(mangaId)
+        val mergeId = references.firstOrNull { it.mangaId == mangaId }?.mergeId ?: return@withNonCancellableContext Result.NoChapters
+
+        val allSiblingChapters = getMergedChaptersByMangaId.await(mergeId, dedupe = false)
+        val siblingsToUpdate = allSiblingChapters.filter { sibling ->
+            sibling.mangaId != mangaId &&
+                sibling.isRecognizedNumber &&
+                sibling.chapterNumber == chapterNumber &&
+                sibling.lastPageRead != lastPageRead &&
+                !sibling.read
+        }
+
+        if (siblingsToUpdate.isNotEmpty()) {
+            val manga = mangaRepository.getMangaById(mangaId)
+            val source = sourceManager.get(manga.source)
+            val sourceName = source?.name ?: "Situs ${manga.source}"
+            logcat(LogPriority.DEBUG) { "[RoutDebug] Sinkronisasi progres baca (Hal: $lastPageRead) untuk bab $chapterNumber dari situs '$sourceName' ke ${siblingsToUpdate.size} sumber lainnya dalam penggabungan $mergeId" }
+            try {
+                chapterRepository.updateAll(
+                    siblingsToUpdate.map {
+                        ChapterUpdate(
+                            id = it.id,
+                            lastPageRead = lastPageRead,
+                        )
+                    },
+                )
+            } catch (e: Exception) {
+                logcat(LogPriority.ERROR, e)
+                return@withNonCancellableContext Result.InternalError(e)
+            }
+        }
+        Result.Success
+    }
+    // KMK <--
 
     sealed interface Result {
         data object Success : Result

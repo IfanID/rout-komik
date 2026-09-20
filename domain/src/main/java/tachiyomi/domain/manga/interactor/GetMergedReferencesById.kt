@@ -19,6 +19,21 @@ class GetMergedReferencesById(
         }
     }
 
+    suspend fun awaitByMangaId(mangaId: Long): List<MergedMangaReference> {
+        return try {
+            val references = mangaMergeRepository.getReferencesByMangaId(mangaId)
+            val mergeId = references.firstOrNull { it.mangaId == mangaId }?.mergeId
+            if (mergeId != null) {
+                mangaMergeRepository.getReferencesById(mergeId)
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            logcat(LogPriority.ERROR, e)
+            emptyList()
+        }
+    }
+
     suspend fun subscribe(id: Long): Flow<List<MergedMangaReference>> {
         return mangaMergeRepository.subscribeReferencesById(id)
     }
