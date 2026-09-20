@@ -144,7 +144,7 @@
     <string name="onboarding_storage_folder_name_label_created">FOLDER PREPARED</string>
     <string name="onboarding_storage_folder_name_hint">Enter folder name</string>
     <string name="onboarding_storage_permission_dialog_title">Permission Required</string>
-    <string name="onboarding_storage_permission_dialog_desc">To store data, you need to grant access permission to the \"%1$s\" folder recently created in the Documents directory.</string>
+    <string name="onboarding_storage_permission_dialog_desc">Folder \"%1$s\" will open automatically. Simply tap \'Use this folder\' to grant access.</string>
     <string name="onboarding_permission_external_storage">Access media files permission</string>
     <string name="onboarding_permission_external_storage_description">Allow using custom covers in entry's Edit Info</string>
     <string name="onboarding_permission_writing_external_storage_description">Allow saving covers &amp; using custom covers in entry's Edit Info</string>

@@ -58,6 +58,7 @@ import uy.kohesive.injekt.api.fullType
 internal fun AppThemePreferenceWidget(
     value: AppTheme,
     amoled: Boolean,
+    isGrid: Boolean = true,
     onItemClick: (AppTheme) -> Unit,
 ) {
     BasePreferenceWidget(
@@ -65,6 +66,7 @@ internal fun AppThemePreferenceWidget(
             AppThemesList(
                 currentTheme = value,
                 amoled = amoled,
+                isGrid = isGrid,
                 onItemClick = onItemClick,
             )
         },
@@ -75,6 +77,7 @@ internal fun AppThemePreferenceWidget(
 private fun AppThemesList(
     currentTheme: AppTheme,
     amoled: Boolean,
+    isGrid: Boolean,
     onItemClick: (AppTheme) -> Unit,
 ) {
     val context = LocalContext.current
@@ -83,54 +86,104 @@ private fun AppThemesList(
             .filterNot { it.titleRes == null }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = PrefsHorizontalPadding),
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
-    ) {
-        val chunks = appThemes.chunked(4)
-        chunks.forEach { rowThemes ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
-            ) {
-                rowThemes.forEach { appTheme ->
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(top = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        TachiyomiTheme(
-                            appTheme = appTheme,
-                            amoled = amoled,
+    if (isGrid) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = PrefsHorizontalPadding),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+        ) {
+            val chunks = appThemes.chunked(4)
+            chunks.forEach { rowThemes ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+                ) {
+                    rowThemes.forEach { appTheme ->
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(top = 8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
-                            AppThemePreviewItem(
-                                selected = currentTheme == appTheme,
-                                onClick = {
-                                    onItemClick(appTheme)
-                                    (context as? Activity)?.let { ActivityCompat.recreate(it) }
-                                },
+                            TachiyomiTheme(
+                                appTheme = appTheme,
+                                amoled = amoled,
+                            ) {
+                                AppThemePreviewItem(
+                                    selected = currentTheme == appTheme,
+                                    onClick = {
+                                        onItemClick(appTheme)
+                                        (context as? Activity)?.let { ActivityCompat.recreate(it) }
+                                    },
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Text(
+                                text = stringResource(appTheme.titleRes!!),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .secondaryItemAlpha(),
+                                textAlign = TextAlign.Center,
+                                maxLines = 2,
+                                minLines = 2,
+                                style = MaterialTheme.typography.bodyMedium,
                             )
                         }
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Text(
-                            text = stringResource(appTheme.titleRes!!),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .secondaryItemAlpha(),
-                            textAlign = TextAlign.Center,
-                            maxLines = 2,
-                            minLines = 2,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
+                    }
+                    if (rowThemes.size < 4) {
+                        Spacer(modifier = Modifier.weight((4 - rowThemes.size).toFloat()))
                     }
                 }
-                if (rowThemes.size < 4) {
-                    Spacer(modifier = Modifier.weight((4 - rowThemes.size).toFloat()))
+            }
+        }
+    } else {
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = PrefsHorizontalPadding),
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+        ) {
+            items(appThemes.chunked(2)) { chunk ->
+                Column(
+                    modifier = Modifier
+                        .width(114.dp) // Approximate width for 4 items in a standard screen width
+                        .padding(top = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+                ) {
+                    chunk.forEach { appTheme ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            TachiyomiTheme(
+                                appTheme = appTheme,
+                                amoled = amoled,
+                            ) {
+                                AppThemePreviewItem(
+                                    selected = currentTheme == appTheme,
+                                    onClick = {
+                                        onItemClick(appTheme)
+                                        (context as? Activity)?.let { ActivityCompat.recreate(it) }
+                                    },
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Text(
+                                text = stringResource(appTheme.titleRes!!),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .secondaryItemAlpha(),
+                                textAlign = TextAlign.Center,
+                                maxLines = 2,
+                                minLines = 2,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -277,6 +330,7 @@ private fun AppThemesListPreview() {
             AppThemesList(
                 currentTheme = appTheme,
                 amoled = false,
+                isGrid = true,
                 onItemClick = { appTheme = it },
             )
         }

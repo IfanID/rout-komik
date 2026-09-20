@@ -96,6 +96,7 @@ object SettingsAppearanceScreen : SearchableSettings {
                         AppThemePreferenceWidget(
                             value = appTheme,
                             amoled = amoled,
+                            isGrid = false,
                             onItemClick = { appThemePref.set(it) },
                         )
                     }

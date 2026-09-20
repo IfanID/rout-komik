@@ -1,80 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Actions -->
+    <string name="action_search_for_source">Cari sumber</string>
     <string name="action_source_search">Cari nama sumber</string>
+    <string name="action_library_search">Pencarian pustaka</string>
     <string name="action_toggle_nsfw_only">Alihkan NSFW saja</string>
     <string name="action_bulk_select">Mode pemilihan masal</string>
     <string name="action_faq_and_guides">FAQ dan Panduan</string>
-    <string name="download_cache_renew_interval">Unduh interval pembaruan cache</string>
-    <string name="download_cache_renew_interval_manual">Manual</string>
-    <string name="download_cache_renew_interval_1hour">1 jam</string>
-    <string name="download_cache_renew_interval_2hour">2 jam</string>
-    <string name="download_cache_renew_interval_6hour">6 jam</string>
-    <string name="download_cache_renew_interval_12hour">12 jam</string>
-    <string name="download_cache_renew_interval_24hour">1 hari</string>
-    <string name="download_cache_renew_interval_info">Jika diatur ke manual, Anda dapat memperbarui setiap manga secara manual atau menggunakan tindakan “Reindeksasi unduhan” di menu Lanjutan</string>
-    <string name="pref_clean_invalid_downloads">Bersihkan unduhan yang tidak valid</string>
-    <string name="pref_clean_invalid_downloads_summary">Temukan dan hapus semua unduhan, file, folder yang tidak disimpan di perpustakaan Anda</string>
-    <string name="invalid_downloads_cleaned">Unduhan yang tidak valid dibersihkan</string>
-    <string name="pref_private_installer_warning">Hindari menggunakan Penginstal Pribadi karena belum stabil, ini menyebabkan aplikasi mulai/berhenti sangat lambat.</string>
-    <string name="whats_coming">Yang akan datang (Segera)</string>
-    <string name="action_allow_duplicate_manga">Izinkan</string>
-    <string name="action_skip_duplicate_manga">Lewati</string>
-    <string name="action_allow_all_duplicate_manga">Izinkan semua</string>
-    <string name="action_skip_all_duplicate_manga">Lewati semua</string>
-    <string name="update_check_try_now">Coba sekarang</string>
-    <string name="update_check_notification_preview_available">Pembaruan yang akan datang (segera)!</string>
-    <string name="changelogs">Log perubahan</string>
-    <string name="related_mangas_more">Lainnya seperti ini...</string>
-    <string name="too_many_in_feed">Terlalu banyak sumber di daftar konten Anda, tidak dapat menambahkan lebih dari 20</string>
-    <string name="current_">Saat ini: %1$s</string>
-    <string name="pref_theme_cover_based">Tema berdasarkan sampul</string>
-    <string name="pref_theme_cover_based_style_neutral">Netral</string>
-    <string name="pref_theme_cover_based_style_expressive">Ekspresif</string>
-    <string name="pref_theme_cover_based_style_rainbow">Pelangi</string>
-    <string name="pref_theme_cover_based_style_fruitsalad">Buah Salad</string>
-    <string name="pref_theme_cover_based_style_monochrome">Monokrom</string>
-    <string name="pref_theme_cover_based_style_content">Isi</string>
-    <string name="action_search_for_source">Cari sumber</string>
-    <string name="action_library_search">Pencarian pustaka</string>
-    <string name="theme_cloudflare">Cloudflare</string>
-    <string name="theme_cottoncandy">Permen Kapas</string>
-    <string name="theme_matrix">Matriks</string>
-    <string name="theme_mocha">Moka</string>
-    <string name="theme_sapphire">Safir</string>
-    <string name="pref_show_updating_progress_banner">Tampilkan progres pembaruan</string>
-    <string name="pref_show_restoring_progress_banner">Tampilkan progres pemulihan</string>
-    <string name="saved_searches_feeds">Penelusuran Disimpan &amp; Feeds</string>
-    <string name="onboarding_permission_external_storage">Izin akses file media</string>
     <string name="action_move_up">Naik Keatas</string>
     <string name="action_move_down">Pindah ke bawah</string>
-    <string name="saved_searches_add_feed">Penelusuran Disimpan (Tahan untuk menambahkan ke Feed)</string>
-    <string name="saved_searches_delete">Penelusuran Disimpan (Tahan untuk menghapus)</string>
-    <string name="action_display_source_badge">Sumber ikon</string>
-    <string name="action_display_language_icon">Gunakan ikon bahasa</string>
     <string name="action_confirm_color">Konfirmasi warna</string>
-    <string name="pref_custom_color">Personalisasi Palette</string>
-    <string name="theme_custom">Tema khusus</string>
-    <string name="extensions_page_need_refresh">Segarkan halaman ekstensi untuk memperbarui daftar.</string>
-    <string name="extensions_page_more">Lebih banyak ekstensi...</string>
-    <string name="pref_source_related_mangas">Suggestions</string>
-    <string name="related_mangas_website_suggestions">Website Suggestions</string>
-    <string name="custom_theme_palette_lcd">LCD</string>
-    <string name="custom_theme_palette_pico">PICO-8</string>
-    <string name="action_scroll_to_top">Scroll to top</string>
-    <string name="action_scroll_to_next">Scroll to next</string>
-    <string name="pref_manga_info">Manga Info</string>
-    <string name="manual_download">Manual download</string>
-    <string name="open">Open</string>
-    <string name="release_page">Release page</string>
-    <string name="auto_update_app_disable_auto_download">Don\'t auto download update</string>
     <string name="action_remove_merged">Hapus entri asli dari perpustakaan?</string>
-    <string name="batch_add_description">Support: MangaDex, E-H, ExH, nH, 8Muses</string>
     <string name="action_hide">Sembunyikan</string>
     <string name="action_show_hidden_categories">Tampilkan kategori tersembunyi</string>
     <string name="action_panorama_cover">Penutup panorama</string>
     <string name="action_open_folder">Buka berkas</string>
     <string name="action_clear_manga">Bersihkan manga</string>
     <string name="action_update">Perbarui</string>
+        <!-- History section -->
+    <string name="action_filter_unfinished_manga">Manga belum selesai</string>
+    <string name="action_filter_unfinished_chapter">Bab belum selesai</string>
+    <string name="action_filter_non_library_entries">Entri non-pustaka</string>
+    <!-- Reader -->
+      <!-- Reader Actions -->
     <string name="action_copy_to_clipboard_first_page">Salin halaman pertama ke papan klip</string>
     <string name="action_copy_to_clipboard_second_page">Salin halaman kedua ke papan klip</string>
     <string name="action_copy_to_clipboard_combined_page">Salin halaman gabungan ke papan klip</string>
@@ -90,11 +38,21 @@
     <string name="scale_type_20_9">20:9</string>
     <string name="scale_type_4_3">4:3</string>
     <string name="scale_type_3_2">3:2</string>
+    <!-- Preferences -->
+      <!-- Appearance section -->
     <string name="pref_custom_theme_style">Gaya tema khusus</string>
+    <string name="pref_manga_info">Manga Info</string>
+    <string name="pref_theme_cover_based">Tema berdasarkan sampul</string>
     <string name="pref_theme_cover_based_style">Gaya tema berdasarkan sampul</string>
     <string name="pref_theme_cover_based_style_tonalspot">Skema Warna Tonal</string>
+    <string name="pref_theme_cover_based_style_neutral">Netral</string>
     <string name="pref_theme_cover_based_style_vibrant">Bersemangat</string>
+    <string name="pref_theme_cover_based_style_expressive">Ekspresif</string>
+    <string name="pref_theme_cover_based_style_rainbow">Pelangi</string>
+    <string name="pref_theme_cover_based_style_fruitsalad">Buah Salad</string>
+    <string name="pref_theme_cover_based_style_monochrome">Monokrom</string>
     <string name="pref_theme_cover_based_style_fidelity">Fidelitas</string>
+    <string name="pref_theme_cover_based_style_content">Isi</string>
     <string name="pref_panorama_cover">Penutup Panorama</string>
     <string name="pref_panorama_cover_summary">Tampilkan sampul dalam mode lanskap jika gambar tersebut lebar</string>
     <string name="pref_panorama_cover_flow">Aliran Penutup Panorama</string>
@@ -108,8 +66,16 @@
     <string name="put_related_mangas_in_overflow_summary">Pindahkan tombol Saran ke menu overflow alih-alih menempatkannya di halaman masuk</string>
     <string name="pref_show_home_on_related_mangas">Rumah dari Saran</string>
     <string name="pref_show_home_on_related_mangas_summary">Tampilkan ikon saat menjelajah Saran untuk kembali langsung ke Beranda</string>
+    <string name="theme_cloudflare">Cloudflare</string>
+    <string name="theme_cottoncandy">Permen Kapas</string>
     <string name="theme_doom">Malapetaka</string>
+    <string name="theme_matrix">Matriks</string>
+    <string name="theme_mocha">Moka</string>
+    <string name="theme_sapphire">Safir</string>
+    <!-- Custom Color Picker -->
+    <string name="pref_custom_color">Personalisasi Palette</string>
     <string name="custom_color_description">Pilih warna benih untuk Tema khusus</string>
+    <string name="theme_custom">Tema khusus</string>
     <string name="custom_theme_palette_casual">Kasual</string>
     <string name="custom_theme_palette_sunset">Matahari terbenam</string>
     <string name="custom_theme_palette_outrun">Berlari lebih cepat</string>
@@ -121,35 +87,119 @@
     <string name="custom_theme_palette_spectral">Spektral</string>
     <string name="custom_theme_palette_patagonia">Patagonia</string>
     <string name="custom_theme_palette_springfield">lapangan musim semi</string>
+    <string name="custom_theme_palette_lcd">LCD</string>
+    <string name="custom_theme_palette_pico">PICO-8</string>
+    <!-- Library section -->
+    <string name="pref_show_updating_progress_banner">Tampilkan progres pembaruan</string>
+    <string name="action_display_source_badge">Sumber ikon</string>
+    <string name="action_display_language_icon">Gunakan ikon bahasa</string>
     <string name="pref_library_filter_categories_details">Entri dalam kategori yang dikecualikan tidak akan ditampilkan meskipun juga terdapat dalam kategori yang termasuk.</string>
     <string name="updating">Memperbarui</string>
     <string name="pref_show_empty_categories_search">Tampilkan kategori kosong selama pencarian/pemfilteran</string>
+    <string name="pref_fetch_manga_metadata_on_add">Ambil metadata saat menambahkan ke pustaka</string>
+    <string name="pref_fetch_manga_metadata_on_add_description">Secara otomatis mengambil metadata manga baru saat menambahkannya ke pustaka</string>
+    <string name="pref_fetch_manga_chapters_on_add">Ambil bab saat menambahkan ke pustaka</string>
+    <string name="pref_fetch_manga_chapters_on_add_description">Secara otomatis mengambil daftar bab manga baru saat menambahkannya ke pustaka</string>
+    <!-- Extension section -->
+    <string name="extensions_page_need_refresh">Segarkan halaman ekstensi untuk memperbarui daftar.</string>
+    <string name="extensions_page_more">Lebih banyak ekstensi...</string>
+    <!-- Extension repos -->
+      <!-- Downloads section -->
+    <string name="download_cache_renew_interval">Unduh interval pembaruan cache</string>
+    <string name="download_cache_renew_interval_manual">Manual</string>
+    <string name="download_cache_renew_interval_1hour">1 jam</string>
+    <string name="download_cache_renew_interval_2hour">2 jam</string>
+    <string name="download_cache_renew_interval_6hour">6 jam</string>
+    <string name="download_cache_renew_interval_12hour">12 jam</string>
+    <string name="download_cache_renew_interval_24hour">1 hari</string>
+    <string name="download_cache_renew_interval_info">Jika diatur ke manual, Anda dapat memperbarui setiap manga secara manual atau menggunakan tindakan “Reindeksasi unduhan” di menu Lanjutan</string>
+    <!-- Tracking section -->
     <string name="pref_auto_sync_progress_from_trackers">Kemajuan sinkronisasi otomatis dari Pelacak</string>
     <string name="sync_progress_from_trackers_up_to_chapter">Sinkronkan kemajuan dari Pelacak hingga bab %d</string>
     <string name="pref_track_on_add_library">Buka menu track untuk menambahkan ke perpustakaan</string>
+    <!-- Sync section -->
+    <string name="pref_show_restoring_progress_banner">Tampilkan progres pemulihan</string>
     <string name="pref_show_syncing_progress_banner">Tampilkan spanduk kemajuan sinkronisasi</string>
+    <string name="web_dav">WebDAV</string>
+    <string name="pref_webdav_url">URL Server WebDAV</string>
+    <string name="pref_webdav_url_summ">Masukkan alamat server WebDAV</string>
+    <string name="pref_webdav_username">Nama Pengguna</string>
+    <string name="pref_webdav_username_summ">Masukkan nama pengguna akun WebDAV Anda</string>
+    <string name="pref_webdav_password">Kata sandi</string>
+    <string name="pref_webdav_password_summ">Masukkan kata sandi akun WebDAV Anda</string>
+    <string name="pref_webdav_folder">Folder data WebDAV</string>
+    <string name="pref_webdav_folder_summ">Aplikasi akan menyimpan data di folder ini</string>
+    <!-- Advanced section -->
+    <string name="pref_clean_invalid_downloads">Bersihkan unduhan yang tidak valid</string>
+    <string name="pref_clean_invalid_downloads_summary">Temukan dan hapus semua unduhan, file, folder yang tidak disimpan di perpustakaan Anda</string>
+    <string name="invalid_downloads_cleaned">Unduhan yang tidak valid dibersihkan</string>
+    <string name="pref_private_installer_warning">Hindari menggunakan Penginstal Pribadi karena belum stabil, ini menyebabkan aplikasi mulai/berhenti sangat lambat.</string>
+    <string name="saved_searches_feeds">Penelusuran Disimpan &amp; Feeds</string>
     <string name="preload_library_cover_color">Warna sampul perpustakaan pramuat</string>
     <string name="auto_update_app">Aplikasi diperbarui otomatis</string>
+    <string name="auto_update_app_disable_auto_download">Jangan unduh pembaruan otomatis</string>
+    <!-- Onboarding section -->
+    <string name="onboarding_storage_kmk_info">Pilih nama folder untuk menyimpan data aplikasi. Folder ini akan dibuat di dalam direktori Dokumen perangkat Anda.</string>
+    <string name="onboarding_storage_folder_name_label">NAMA FOLDER</string>
+    <string name="onboarding_storage_folder_name_label_created">FOLDER DISIAPKAN</string>
+    <string name="onboarding_storage_folder_name_hint">Masukkan nama folder</string>
+    <string name="onboarding_storage_permission_dialog_title">Izin Diperlukan</string>
+    <string name="onboarding_storage_permission_dialog_desc">Folder \"%1$s\" akan terbuka secara otomatis. Cukup ketuk \'Gunakan folder ini\' untuk memberikan izin akses.</string>
+    <string name="onboarding_permission_external_storage">Izin akses file media</string>
     <string name="onboarding_permission_external_storage_description">Izinkan penggunaan sampul khusus di Edit Info entri</string>
     <string name="onboarding_permission_writing_external_storage_description">Izinkan menyimpan sampul &amp; menggunakan sampul khusus di Edit Info entri</string>
     <string name="permission_writing_external_storage_succeed">Izin diberikan. Coba tindakan lagi.</string>
+    <!-- About section -->
+    <string name="whats_coming">Yang akan datang (Segera)</string>
+    <!-- Manga info -->
+    <string name="action_allow_duplicate_manga">Izinkan</string>
+    <string name="action_skip_duplicate_manga">Lewati</string>
+    <string name="action_allow_all_duplicate_manga">Izinkan semua</string>
+    <string name="action_skip_all_duplicate_manga">Lewati semua</string>
     <string name="downloaded_data">Data yang diunduh</string>
     <string name="chapters_from_database">Bab &amp; Riwayat dari Database</string>
+    <!--UpdateCheck-->
+    <string name="update_check_try_now">Coba sekarang</string>
     <string name="update_completed">Pembaruan selesai</string>
+    <string name="open">Buka</string>
+    <string name="release_page">Halaman rilis</string>
     <string name="could_not_install_update">Tidak dapat menginstal pembaruan</string>
+    <!--UpdateCheck Notifications-->
+    <string name="update_check_notification_preview_available">Pembaruan yang akan datang (segera)!</string>
+    <!-- About -->
+    <string name="changelogs">Log perubahan</string>
     <string name="action_manual_install">Instalasi manual</string>
+    <string name="manual_download">Unduhan manual</string>
+    <!-- Browse settings -->
+    <string name="pref_source_related_mangas">Saran</string>
     <string name="pref_source_related_mangas_summary">Tampilkan saran dari situs web sumber saat melihat entri</string>
+    <string name="related_mangas_website_suggestions">Saran Situs Web</string>
+    <string name="related_mangas_more">Lainnya seperti ini...</string>
+    <string name="saved_searches_add_feed">Penelusuran Disimpan (Tahan untuk menambahkan ke Feed)</string>
+    <string name="saved_searches_delete">Penelusuran Disimpan (Tahan untuk menghapus)</string>
+    <!-- Error Screen -->
     <string name="option_label_library_update_errors">Kesalahan pembaruan perpustakaan</string>
     <string name="label_library_update_errors">Kesalahan pembaruan perpustakaan (%d)</string>
     <string name="info_empty_library_update_errors">Anda tidak memiliki kesalahan pembaruan perpustakaan.</string>
+    <string name="action_scroll_to_top">Scroll to top</string>
     <string name="action_scroll_to_bottom">Gulir ke bawah</string>
     <string name="action_scroll_to_previous">Gulir ke sebelumnya</string>
+    <string name="action_scroll_to_next">Scroll to next</string>
+    <!-- Feed Tab -->
+    <string name="too_many_in_feed">Terlalu banyak sumber di daftar konten Anda, tidak dapat menambahkan lebih dari 20</string>
     <string name="action_sort_feed">Urutkan feed</string>
     <string name="sort_feed_confirmation">Apakah Anda ingin mengurutkan feed berdasarkan abjad?</string>
+    <!-- Migration -->
+    <string name="current_">Saat ini: %1$s</string>
+    <string name="migrationConfigScreen_smartSearchSingleEntryTitle">Gunakan pencarian cerdas</string>
+    <string name="migrationConfigScreen_smartSearchSingleEntrySubtitle">Jika diaktifkan, secara otomatis memilih hasil yang paling cocok. Jika tidak, akan menampilkan semua hasil pencarian untuk pemilihan manual.</string>
+    <!-- Misc -->
     <string name="job_failed_schedule_update_check">Gagal menjadwalkan pembaruan perpustakaan otomatis: %s</string>
     <string name="job_failed_schedule_backup_check">Gagal menjadwalkan pencadangan otomatis: %s</string>
     <string name="label_to_be_updated">Untuk diperbarui</string>
     <string name="sponsor_me">Dukung Saya</string>
+    <string name="batch_add_description">Support: MangaDex, E-H, ExH, nH, 8Muses</string>
+    <!-- Connections section -->
     <string name="special_services">Layanan Khusus</string>
     <string name="pref_category_connections">Koneksi</string>
     <string name="pref_connections_summary">Discord, lebih banyak lagi yang akan datang...</string>
@@ -172,6 +222,7 @@
     <string name="active_account">Akun Aktif</string>
     <string name="no_accounts_found">Tidak ada akun yang ditemukan</string>
     <string name="login_failed">Gagal masuk</string>
+    <!-- Discord section -->
     <string name="discord_status_description">%1$s %2$s</string>
     <string name="discord_status_using">Menggunakan</string>
     <string name="discord_status_browsing">Menjelajah</string>
@@ -179,6 +230,7 @@
     <string name="discord_status_messing">Bermain-main dengan</string>
     <string name="discord_download_button">Baca di %s</string>
     <string name="discord_app_description">Komikku - aplikasi pembaca manga</string>
+    <!-- Discord RPC Customization -->
     <string name="pref_category_discord_customization">Kustomisasi Discord</string>
     <string name="pref_discord_custom_message">Pesan Khusus</string>
     <string name="pref_discord_custom_message_summary">Pesan khusus yang akan ditampilkan Discord</string>
@@ -192,7 +244,4 @@
     <string name="pref_discord_show_download_button_summary">Menampilkan tombol untuk mengunduh aplikasi</string>
     <string name="pref_discord_show_discord_button">Tampilkan Tombol Discord</string>
     <string name="pref_discord_show_discord_button_summary">Menampilkan tombol untuk bergabung dengan server Discord</string>
-    <string name="web_dav">WebDAV</string>
-    <string name="pref_webdav_username">Nama Pengguna</string>
-    <string name="pref_webdav_password">Kata sandi</string>
 </resources>
