@@ -87,7 +87,7 @@ data class LibrarySort(
             )
         }
         val directions by lazy { setOf(Direction.Ascending, Direction.Descending) }
-        val default = LibrarySort(Type.Alphabetical, Direction.Ascending)
+        val default = LibrarySort(Type.LastRead, Direction.Descending)
 
         fun valueOf(flag: Long?): LibrarySort {
             if (flag == null) return default

@@ -30,7 +30,7 @@ class LibraryPreferences(
 
     fun randomSortSeed() = preferenceStore.getInt("library_random_sort_seed", 0)
 
-    fun portraitColumns() = preferenceStore.getInt("pref_library_columns_portrait_key", 0)
+    fun portraitColumns() = preferenceStore.getInt("pref_library_columns_portrait_key", 4)
 
     fun landscapeColumns() = preferenceStore.getInt("pref_library_columns_landscape_key", 0)
 
@@ -80,7 +80,7 @@ class LibraryPreferences(
 
     fun showContinueReadingButton() = preferenceStore.getBoolean(
         "display_continue_reading_button",
-        false,
+        true,
     )
 
     fun markDuplicateReadChapterAsRead() = preferenceStore.getStringSet("mark_duplicate_read_chapter_read", emptySet())
@@ -141,7 +141,7 @@ class LibraryPreferences(
 
     // region Badges
 
-    fun downloadBadge() = preferenceStore.getBoolean("display_download_badge", false)
+    fun downloadBadge() = preferenceStore.getBoolean("display_download_badge", true)
 
     fun unreadBadge() = preferenceStore.getBoolean("display_unread_badge", true)
 
@@ -168,12 +168,12 @@ class LibraryPreferences(
 
     fun categoryTabs() = preferenceStore.getBoolean("display_category_tabs", true)
 
-    fun categoryNumberOfItems() = preferenceStore.getBoolean("display_number_of_items", false)
+    fun categoryNumberOfItems() = preferenceStore.getBoolean("display_number_of_items", true)
 
     fun categorizedDisplaySettings() = preferenceStore.getBoolean("categorized_display", false)
 
     // KMK -->
-    fun showHiddenCategories() = preferenceStore.getBoolean("hide_hidden_categories", false)
+    fun showHiddenCategories() = preferenceStore.getBoolean("hide_hidden_categories", true)
     // KMK <--
 
     fun updateCategories() = preferenceStore.getStringSet(LIBRARY_UPDATE_CATEGORIES_PREF_KEY, emptySet())

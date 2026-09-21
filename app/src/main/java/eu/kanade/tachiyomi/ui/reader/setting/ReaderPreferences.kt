@@ -45,12 +45,12 @@ class ReaderPreferences(
 
     fun defaultReadingMode() = preferenceStore.getInt(
         "pref_default_reading_mode_key",
-        ReadingMode.RIGHT_TO_LEFT.flagValue,
+        ReadingMode.WEBTOON.flagValue,
     )
 
     fun defaultOrientationType() = preferenceStore.getInt(
         "pref_default_orientation_type_key",
-        ReaderOrientation.FREE.flagValue,
+        ReaderOrientation.LOCKED_PORTRAIT.flagValue,
     )
 
     fun webtoonDoubleTapZoomEnabled() = preferenceStore.getBoolean("pref_enable_double_tap_zoom_webtoon", true)
@@ -74,7 +74,7 @@ class ReaderPreferences(
 
     fun alwaysShowChapterTransition() = preferenceStore.getBoolean("always_show_chapter_transition", true)
 
-    fun cropBorders() = preferenceStore.getBoolean("crop_borders", false)
+    fun cropBorders() = preferenceStore.getBoolean("crop_borders", true)
 
     fun navigateToPan() = preferenceStore.getBoolean("navigate_pan", true)
 
@@ -84,7 +84,7 @@ class ReaderPreferences(
     fun landscapeZoomType() = preferenceStore.getEnum("landscape_zoom_type", LandscapeZoomScaleType.FIT)
     // KMK <--
 
-    fun cropBordersWebtoon() = preferenceStore.getBoolean("crop_borders_webtoon", false)
+    fun cropBordersWebtoon() = preferenceStore.getBoolean("crop_borders_webtoon", true)
 
     fun webtoonSidePadding() = preferenceStore.getInt("webtoon_side_padding", WEBTOON_PADDING_MIN)
 
@@ -98,7 +98,7 @@ class ReaderPreferences(
 
     fun skipDupe() = preferenceStore.getBoolean("skip_dupe", false)
 
-    fun webtoonDisableZoomOut() = preferenceStore.getBoolean("webtoon_disable_zoom_out", false)
+    fun webtoonDisableZoomOut() = preferenceStore.getBoolean("webtoon_disable_zoom_out", true)
 
     // KMK -->
     fun pagedDisableZoomIn() = preferenceStore.getBoolean("paged_disable_zoom_in", false)
@@ -152,9 +152,9 @@ class ReaderPreferences(
 
     fun readWithVolumeKeysInverted() = preferenceStore.getBoolean("reader_volume_keys_inverted", false)
 
-    fun navigationModePager() = preferenceStore.getInt("reader_navigation_mode_pager", 0)
+    fun navigationModePager() = preferenceStore.getInt("reader_navigation_mode_pager", 4)
 
-    fun navigationModeWebtoon() = preferenceStore.getInt("reader_navigation_mode_webtoon", 0)
+    fun navigationModeWebtoon() = preferenceStore.getInt("reader_navigation_mode_webtoon", 4)
 
     fun pagerNavInverted() = preferenceStore.getEnum("reader_tapping_inverted", TappingInvertMode.NONE)
 
@@ -190,11 +190,11 @@ class ReaderPreferences(
 
     fun useAutoWebtoon() = preferenceStore.getBoolean("eh_use_auto_webtoon", true)
 
-    fun continuousVerticalTappingByPage() = preferenceStore.getBoolean("continuous_vertical_tapping_by_page", false)
+    fun continuousVerticalTappingByPage() = preferenceStore.getBoolean("continuous_vertical_tapping_by_page", true)
 
-    fun cropBordersContinuousVertical() = preferenceStore.getBoolean("crop_borders_continues_vertical", false)
+    fun cropBordersContinuousVertical() = preferenceStore.getBoolean("crop_borders_continues_vertical", true)
 
-    fun forceHorizontalSeekbar() = preferenceStore.getBoolean("pref_force_horz_seekbar", false)
+    fun forceHorizontalSeekbar() = preferenceStore.getBoolean("pref_force_horz_seekbar", true)
 
     fun landscapeVerticalSeekbar() = preferenceStore.getBoolean("pref_show_vert_seekbar_landscape", false)
 

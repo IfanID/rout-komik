@@ -50,12 +50,12 @@ class UiPreferences(
 
     fun hideFeedTab() = preferenceStore.getBoolean("hide_latest_tab", false)
 
-    fun feedTabInFront() = preferenceStore.getBoolean("latest_tab_position", false)
+    fun feedTabInFront() = preferenceStore.getBoolean("latest_tab_position", true)
 
     // KMK -->
-    fun expandRelatedMangas() = preferenceStore.getBoolean("expand_related_mangas", true)
+    fun expandRelatedMangas() = preferenceStore.getBoolean("expand_related_mangas", false)
 
-    fun relatedMangasInOverflow() = preferenceStore.getBoolean("related_mangas_in_overflow", false)
+    fun relatedMangasInOverflow() = preferenceStore.getBoolean("related_mangas_in_overflow", true)
 
     fun showHomeOnRelatedMangas() = preferenceStore.getBoolean("show_home_on_related_mangas", true)
 
@@ -76,7 +76,7 @@ class UiPreferences(
 
     fun previewsRowCount() = preferenceStore.getInt("pref_previews_row_count", 4)
 
-    fun useNewSourceNavigation() = preferenceStore.getBoolean("use_new_source_navigation", true)
+    fun useNewSourceNavigation() = preferenceStore.getBoolean("use_new_source_navigation", false)
 
     fun bottomBarLabels() = preferenceStore.getBoolean("pref_show_bottom_bar_labels", true)
 
