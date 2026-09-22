@@ -64,6 +64,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
@@ -175,6 +177,10 @@ class ReaderViewModel @JvmOverloads constructor(
             savedState["page_index"] = value
             field = value
         }
+
+    // KMK -->
+    private val syncProgressQueue = Channel<Triple<Long, Double, Long>>(Channel.CONFLATED)
+    // KMK <--
 
     // KMK -->
     fun handleDownloadAction(chapter: Chapter, action: ChapterDownloadAction) {
@@ -352,6 +358,15 @@ class ReaderViewModel @JvmOverloads constructor(
     private val downloadAheadAmount = downloadPreferences.autoDownloadWhileReading().get()
 
     init {
+        // KMK -->
+        syncProgressQueue.receiveAsFlow()
+            .debounce(1000L)
+            .onEach { (mangaId, chapterNumber, lastPageRead) ->
+                setReadStatus.awaitProgressSync(mangaId, chapterNumber, lastPageRead)
+            }
+            .launchIn(viewModelScope)
+        // KMK <--
+
         // To save state
         state.map { it.viewerChapters?.currChapter }
             .distinctUntilChanged()
@@ -894,10 +909,12 @@ class ReaderViewModel @JvmOverloads constructor(
                 }
 
                 readerChapter.chapter.manga_id?.let { mangaId ->
-                    setReadStatus.awaitProgressSync(
-                        mangaId = mangaId,
-                        chapterNumber = readerChapter.chapter.chapter_number.toDouble(),
-                        lastPageRead = readerChapter.chapter.last_page_read.toLong(),
+                    syncProgressQueue.trySend(
+                        Triple(
+                            mangaId,
+                            readerChapter.chapter.chapter_number.toDouble(),
+                            readerChapter.chapter.last_page_read.toLong(),
+                        ),
                     )
                 }
             }

@@ -101,33 +101,43 @@ class GetMergedChaptersByMangaId(
         chapterList: List<Chapter>,
     ): List<Chapter> {
         val sortedChapterList = mutableListOf<Chapter>()
+        val chapterNumberToIndex = mutableMapOf<Double, Int>()
 
-        var existingChapterIndex: Int
         chapterList.groupBy { it.mangaId }
             .entries
             .sortedBy { (mangaId) ->
                 mangaReferences.find { it.mangaId == mangaId }?.chapterPriority ?: Int.MAX_VALUE
             }
-            .forEach { (_, chapters) ->
-                existingChapterIndex = -1
+            .forEach { (mangaId, chapters) ->
+                var currentPointer = -1
                 chapters.forEach { chapter ->
-                    val oldChapterIndex = existingChapterIndex
                     if (chapter.isRecognizedNumber) {
-                        existingChapterIndex = sortedChapterList.indexOfFirst {
-                            // check if the chapter is not already there
-                            it.isRecognizedNumber &&
-                                it.chapterNumber == chapter.chapterNumber &&
-                                // allow multiple chapters of the same number from the same source
-                                it.mangaId != chapter.mangaId
+                        val existingIndex = chapterNumberToIndex[chapter.chapterNumber]
+                        if (existingIndex != null) {
+                            val existingChapter = sortedChapterList[existingIndex]
+                            if (existingChapter.mangaId != mangaId) {
+                                currentPointer = existingIndex
+                                return@forEach
+                            }
                         }
-                        if (existingChapterIndex == -1) {
-                            sortedChapterList.add(oldChapterIndex + 1, chapter)
-                            existingChapterIndex = oldChapterIndex + 1
-                        }
-                    } else {
-                        sortedChapterList.add(oldChapterIndex + 1, chapter)
-                        existingChapterIndex = oldChapterIndex + 1
                     }
+
+                    val insertIndex = currentPointer + 1
+                    sortedChapterList.add(insertIndex, chapter)
+
+                    // Shift indices in map for all items at or after the insertion point
+                    if (chapterNumberToIndex.isNotEmpty()) {
+                        for (entry in chapterNumberToIndex.entries) {
+                            if (entry.value >= insertIndex) {
+                                entry.setValue(entry.value + 1)
+                            }
+                        }
+                    }
+
+                    if (chapter.isRecognizedNumber) {
+                        chapterNumberToIndex[chapter.chapterNumber] = insertIndex
+                    }
+                    currentPointer = insertIndex
                 }
             }
 

@@ -167,14 +167,10 @@ class SetReadStatus(
         val references = getMergedReferencesById.awaitByMangaId(mangaId)
         val mergeId = references.firstOrNull { it.mangaId == mangaId }?.mergeId ?: return@withNonCancellableContext Result.NoChapters
 
-        val allSiblingChapters = getMergedChaptersByMangaId.await(mergeId, dedupe = false)
-        val siblingsToUpdate = allSiblingChapters.filter { sibling ->
-            sibling.mangaId != mangaId &&
-                sibling.isRecognizedNumber &&
-                sibling.chapterNumber == chapterNumber &&
-                sibling.lastPageRead != lastPageRead &&
-                !sibling.read
-        }
+        val siblingsToUpdate = chapterRepository.getMergedChaptersByNumber(mergeId, chapterNumber, mangaId)
+            .filter { sibling ->
+                sibling.lastPageRead != lastPageRead && !sibling.read
+            }
 
         if (siblingsToUpdate.isNotEmpty()) {
             val manga = mangaRepository.getMangaById(mangaId)

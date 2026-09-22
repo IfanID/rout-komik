@@ -194,5 +194,20 @@ class ChapterRepositoryImpl(
             chaptersQueries.getScanlatorsByMergeId(mangaId) { it.orEmpty() }
         }
     }
+
+    override suspend fun getMergedChaptersByNumber(
+        mergeId: Long,
+        chapterNumber: Double,
+        mangaId: Long,
+    ): List<Chapter> {
+        return handler.awaitList {
+            chaptersQueries.getMergedChaptersByNumber(
+                mergeId,
+                chapterNumber,
+                mangaId,
+                ChapterMapper::mapChapter,
+            )
+        }
+    }
     // SY <--
 }
