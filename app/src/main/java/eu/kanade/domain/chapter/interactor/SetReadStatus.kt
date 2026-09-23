@@ -165,7 +165,10 @@ class SetReadStatus(
         lastPageRead: Long,
     ): Result = withNonCancellableContext {
         val references = getMergedReferencesById.awaitByMangaId(mangaId)
-        val mergeId = references.firstOrNull { it.mangaId == mangaId }?.mergeId ?: return@withNonCancellableContext Result.NoChapters
+        val mergeId = references.firstOrNull { it.mangaId == mangaId }?.mergeId ?: run {
+            logcat(LogPriority.DEBUG) { "[RoutDebug] Progres bab $chapterNumber tidak disinkronkan: Bukan bagian dari komik gabungan" }
+            return@withNonCancellableContext Result.NoChapters
+        }
 
         val siblingsToUpdate = chapterRepository.getMergedChaptersByNumber(mergeId, chapterNumber, mangaId)
             .filter { sibling ->
@@ -190,6 +193,8 @@ class SetReadStatus(
                 logcat(LogPriority.ERROR, e)
                 return@withNonCancellableContext Result.InternalError(e)
             }
+        } else {
+            logcat(LogPriority.DEBUG) { "[RoutDebug] Progres bab $chapterNumber sudah sinkron atau tidak ada sumber lain yang perlu diperbarui dalam penggabungan $mergeId" }
         }
         Result.Success
     }

@@ -60,12 +60,12 @@ import exh.source.isEhBasedManga
 import exh.util.defaultReaderType
 import exh.util.mangaType
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
@@ -84,6 +84,7 @@ import tachiyomi.core.common.storage.UniFileTempFileManager
 import tachiyomi.core.common.util.lang.launchIO
 import tachiyomi.core.common.util.lang.launchNonCancellable
 import tachiyomi.core.common.util.lang.withIOContext
+import tachiyomi.core.common.util.lang.withNonCancellableContext
 import tachiyomi.core.common.util.lang.withUIContext
 import tachiyomi.core.common.util.system.ImageUtil
 import tachiyomi.core.common.util.system.logcat
@@ -177,10 +178,6 @@ class ReaderViewModel @JvmOverloads constructor(
             savedState["page_index"] = value
             field = value
         }
-
-    // KMK -->
-    private val syncProgressQueue = Channel<Triple<Long, Double, Long>>(Channel.CONFLATED)
-    // KMK <--
 
     // KMK -->
     fun handleDownloadAction(chapter: Chapter, action: ChapterDownloadAction) {
@@ -358,15 +355,6 @@ class ReaderViewModel @JvmOverloads constructor(
     private val downloadAheadAmount = downloadPreferences.autoDownloadWhileReading().get()
 
     init {
-        // KMK -->
-        syncProgressQueue.receiveAsFlow()
-            .debounce(1000L)
-            .onEach { (mangaId, chapterNumber, lastPageRead) ->
-                setReadStatus.awaitProgressSync(mangaId, chapterNumber, lastPageRead)
-            }
-            .launchIn(viewModelScope)
-        // KMK <--
-
         // To save state
         state.map { it.viewerChapters?.currChapter }
             .distinctUntilChanged()
@@ -407,6 +395,10 @@ class ReaderViewModel @JvmOverloads constructor(
     override fun onCleared() {
         val currentChapters = state.value.viewerChapters
         if (currentChapters != null) {
+            // KMK -->
+            logcat(LogPriority.DEBUG) { "[RoutDebug] Keluar dari Reader, menjalankan flush progres terakhir" }
+            flushCrossSourceProgress()
+            // KMK <--
             currentChapters.unref()
             chapterToDownload?.let {
                 downloadManager.addDownloadsToStartOfQueue(listOf(it))
@@ -596,6 +588,11 @@ class ReaderViewModel @JvmOverloads constructor(
     private fun loadNewChapter(chapter: ReaderChapter) {
         val loader = loader ?: return
 
+        // KMK -->
+        logcat(LogPriority.DEBUG) { "[RoutDebug] Berpindah ke bab baru, menjalankan flush progres bab lama" }
+        flushCrossSourceProgress()
+        // KMK <--
+
         viewModelScope.launchIO {
             logcat { "Loading ${chapter.chapter.url}" }
 
@@ -619,6 +616,28 @@ class ReaderViewModel @JvmOverloads constructor(
             loadAdjacent(newChapter)
         }
     }
+
+    // KMK -->
+    private fun flushCrossSourceProgress() {
+        if (manga?.source != MERGED_SOURCE_ID) return
+        val currentChapter = state.value.viewerChapters?.currChapter ?: return
+
+        val mangaId = currentChapter.chapter.manga_id ?: return
+        val chapterNumber = currentChapter.chapter.chapter_number.toDouble()
+        val lastPageRead = currentChapter.chapter.last_page_read.toLong()
+
+        logcat(LogPriority.DEBUG) { "[RoutDebug] Memicu sinkronisasi lintas sumber untuk bab $chapterNumber (Hal: $lastPageRead)" }
+
+        // Use the delicate launchIO (without receiver) which uses GlobalScope
+        // to ensure it survives ViewModel.onCleared()
+        @OptIn(DelicateCoroutinesApi::class)
+        tachiyomi.core.common.util.lang.launchIO {
+            withNonCancellableContext {
+                setReadStatus.awaitProgressSync(mangaId, chapterNumber, lastPageRead)
+            }
+        }
+    }
+    // KMK <--
 
     /**
      * Called when the user is going to load the prev/next chapter through the toolbar buttons.
@@ -906,16 +925,6 @@ class ReaderViewModel @JvmOverloads constructor(
                         !it.chapter.read
                 }.forEach {
                     it.chapter.last_page_read = pageIndex
-                }
-
-                readerChapter.chapter.manga_id?.let { mangaId ->
-                    syncProgressQueue.trySend(
-                        Triple(
-                            mangaId,
-                            readerChapter.chapter.chapter_number.toDouble(),
-                            readerChapter.chapter.last_page_read.toLong(),
-                        ),
-                    )
                 }
             }
             // KMK <--

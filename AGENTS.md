@@ -145,6 +145,28 @@ JDK **17**.
 
 ---
 
+## Agent Knowledge Base (Persistent)
+
+### 🚀 Optimasi Performa & Arsitektur Terbaru
+
+| Fitur | Status | Deskripsi |
+|-------|--------|-----------|
+| **Lifecycle-based Sync** | ✅ Aktif | Sinkronisasi `last_page_read` lintas sumber hanya dipicu saat **Reader Exit** atau **Ganti Bab**. Mekanisme real-time/debounce 1 detik telah dihapus untuk menghemat CPU/Baterai. |
+| **Direct Lookup Sync** | ✅ Aktif | `SetReadStatus.awaitProgressSync` menggunakan `getMergedChaptersByNumber` (direct SQL) alih-alih memuat seluruh daftar bab ke memori. |
+| **HashMap Deduplication** | ✅ Aktif | Logika penggabungan bab (`GetMergedChaptersByMangaId`) menggunakan `HashMap` ($O(N)$) untuk mencegah jank pada komik dengan ribuan bab. |
+| **SQL Trigger Refinement**| ✅ Aktif | Trigger `update_manga_version` di `chapters.sq` tidak lagi dipicu oleh perubahan `last_page_read` (hanya `read`/`bookmark`), menjaga scroll Pustaka/Jelajah tetap mulus. |
+
+### 🛠️ Pengaturan Bawaan (Defaults)
+
+| Area | Pengaturan |
+|------|------------|
+| **Jelajah** | Tab "Daftar Konten" (Feed) di depan, Tombol "Terbaru" aktif, Saran Sumber Terkait di menu meluap. |
+| **Pembaca** | Mode Strip Panjang, Rotasi Terkunci Tegak, Seekbar Horizontal, Zona Ketuk Kanan/Kiri, Semua optimasi potong pinggiran aktif. |
+| **Pustaka** | Grid Nyaman, 4 Kolom, Urutan Terakhir Dibaca (Menurun), Semua badge & tab aktif. |
+| **Unduhan** | "Hanya melalui Wi-Fi" disetel ke **OFF**. |
+
+---
+
 ## Fork-origin markers
 
 Preserve inline blocks when editing:
