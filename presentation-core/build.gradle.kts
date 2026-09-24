@@ -30,6 +30,9 @@ kotlin {
 dependencies {
     api(projects.core.common)
     api(projects.i18n)
+    // Rout -->
+    api(projects.i18nRout)
+    // Rout <--
     // SY -->
     api(projects.i18nSy)
     // SY <--

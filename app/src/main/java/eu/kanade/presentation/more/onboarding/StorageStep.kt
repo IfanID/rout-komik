@@ -65,6 +65,7 @@ import tachiyomi.domain.storage.service.StorageManager.Companion.directoryAccess
 import tachiyomi.domain.storage.service.StoragePreferences
 import tachiyomi.i18n.MR
 import tachiyomi.i18n.kmk.KMR
+import tachiyomi.i18n.rout.RMR
 import tachiyomi.presentation.core.components.material.Button
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.stringResource
@@ -139,7 +140,7 @@ internal class StorageStep : OnboardingStep {
                 },
                 title = {
                     Text(
-                        text = stringResource(KMR.strings.onboarding_storage_permission_dialog_title),
+                        text = stringResource(RMR.strings.onboarding_storage_permission_dialog_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
@@ -152,7 +153,7 @@ internal class StorageStep : OnboardingStep {
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(
-                            text = stringResource(KMR.strings.onboarding_storage_permission_dialog_desc, folderName),
+                            text = stringResource(RMR.strings.onboarding_storage_permission_dialog_desc, folderName),
                             style = MaterialTheme.typography.bodyLarge,
                             textAlign = TextAlign.Center,
                             lineHeight = 22.sp,
@@ -218,7 +219,7 @@ internal class StorageStep : OnboardingStep {
             }
 
             Text(
-                text = stringResource(KMR.strings.onboarding_storage_kmk_info),
+                text = stringResource(RMR.strings.onboarding_storage_rout_info),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -245,7 +246,7 @@ internal class StorageStep : OnboardingStep {
                     if (!isEditing) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = if (isLocked) stringResource(KMR.strings.onboarding_storage_folder_name_label_created) else stringResource(KMR.strings.onboarding_storage_folder_name_label),
+                                text = if (isLocked) stringResource(RMR.strings.onboarding_storage_folder_name_label_created) else stringResource(RMR.strings.onboarding_storage_folder_name_label),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = if (isLocked) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary,
                                 letterSpacing = 2.sp,
@@ -278,7 +279,7 @@ internal class StorageStep : OnboardingStep {
                         OutlinedTextField(
                             value = folderName,
                             onValueChange = { folderName = it },
-                            label = { Text(stringResource(KMR.strings.onboarding_storage_folder_name_hint)) },
+                            label = { Text(stringResource(RMR.strings.onboarding_storage_folder_name_hint)) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp),
@@ -361,6 +362,7 @@ internal class StorageStep : OnboardingStep {
 }
 
 // KMK -->
+// Rout -->
 private class OpenDocumentTreeWithHint : ActivityResultContracts.OpenDocumentTree() {
     override fun createIntent(context: Context, input: Uri?): Intent {
         val intent = super.createIntent(context, input)
@@ -403,4 +405,5 @@ private fun createFolderInDocuments(context: Context, folderName: String) {
         Log.e("RoutDebug", "Error saat menyiapkan folder secara fisik", e)
     }
 }
+// Rout <--
 // KMK <--

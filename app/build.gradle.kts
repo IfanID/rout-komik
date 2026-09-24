@@ -203,6 +203,9 @@ kotlin {
 
 dependencies {
     implementation(projects.i18n)
+    // Rout -->
+    implementation(projects.i18nRout)
+    // Rout <--
     // KMK -->
     implementation(projects.i18nKmk)
     // KMK <--

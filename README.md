@@ -1,26 +1,22 @@
 <div align="center">
 
-<a href="https://komikku-app.github.io">
-  <img width=200px height=200px src="./.github/readme-images/app-icon.png"/>
+<a href="https://github.com/IfanID/rout-komik">
+  <img width=200px src="./app/src/main/res/drawable/rout_transparan.png"/>
 </a><br/>
-<a href="https://trendshift.io/repositories/13696" target="_blank"><img src="https://trendshift.io/api/badge/repositories/13696" alt="komikku-app%2Fkomikku | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
- <h1 align="center"> Komikku </h1>
+ <h1 align="center"> Rout </h1>
 
-| Releases | Preview |
-|----------|---------|
-| <div align="center"> [![GitHub downloads](https://img.shields.io/github/downloads/komikku-app/komikku/latest/total?label=Latest%20Downloads&labelColor=27303D&color=0D1117&logo=github&logoColor=FFFFFF&style=flat)](https://github.com/komikku-app/komikku/releases/latest) [![GitHub downloads](https://img.shields.io/github/downloads/komikku-app/komikku/total?label=Total%20Downloads&labelColor=27303D&color=0D1117&logo=github&logoColor=FFFFFF&style=flat)](https://github.com/komikku-app/komikku/releases) [![Stable build](https://img.shields.io/github/actions/workflow/status/komikku-app/komikku/build_release.yml?labelColor=27303D&label=Stable&labelColor=06599d&color=043b69)](https://github.com/komikku-app/komikku/actions/workflows/build_release.yml) | <div align="center"> [![GitHub downloads](https://img.shields.io/github/downloads/komikku-app/komikku-preview/latest/total?label=Latest%20Downloads&labelColor=27303D&color=0D1117&logo=github&logoColor=FFFFFF&style=flat)](https://github.com/komikku-app/komikku-preview/releases/latest) [![GitHub downloads](https://img.shields.io/github/downloads/komikku-app/komikku-preview/total?label=Total%20Downloads&labelColor=27303D&color=0D1117&logo=github&logoColor=FFFFFF&style=flat)](https://github.com/komikku-app/komikku-preview/releases) [![Preview build](https://img.shields.io/github/actions/workflow/status/komikku-app/komikku-preview/build_app.yml?labelColor=27303D&label=Preview&labelColor=2c2c47&color=1c1c39)](https://github.com/komikku-app/komikku-preview/actions/workflows/build_app.yml) |
+| Releases |
+|----------|
+| <div align="center"> [![GitHub downloads](https://img.shields.io/github/downloads/IfanID/rout-komik/latest/total?label=Latest%20Downloads&labelColor=27303D&color=0D1117&logo=github&logoColor=FFFFFF&style=flat)](https://github.com/IfanID/rout-komik/releases/latest) [![GitHub downloads](https://img.shields.io/github/downloads/IfanID/rout-komik/total?label=Total%20Downloads&labelColor=27303D&color=0D1117&logo=github&logoColor=FFFFFF&style=flat)](https://github.com/IfanID/rout-komik/releases) [![Build](https://img.shields.io/github/actions/workflow/status/IfanID/rout-komik/build_release.yml?labelColor=27303D&label=Build&labelColor=06599d&color=043b69)](https://github.com/IfanID/rout-komik/actions/workflows/build_release.yml) |
 
-*Requires Android 8.0 or higher.*
+*Requires Android 12.0 or higher.*
 
-[![Discord](https://img.shields.io/discord/1242381704459452488.svg?label=&labelColor=6A7EC2&color=7389D8&logo=discord&logoColor=FFFFFF)](https://discord.gg/85jB7V5AJR)
-[![CI](https://img.shields.io/github/actions/workflow/status/komikku-app/komikku/build_push.yml?labelColor=27303D&label=CI)](https://github.com/komikku-app/komikku/actions/workflows/build_push.yml)
-[![License: Apache-2.0](https://img.shields.io/github/license/komikku-app/komikku?labelColor=27303D&color=0877d2)](/LICENSE)
-[![Translation status](https://img.shields.io/weblate/progress/komikku-app?labelColor=27303D&color=946300)](https://hosted.weblate.org/engage/komikku-app/)
+[![CI](https://img.shields.io/github/actions/workflow/status/IfanID/rout-komik/build_push.yml?labelColor=27303D&label=CI)](https://github.com/IfanID/rout-komik/actions/workflows/build_push.yml)
+[![License: Apache-2.0](https://img.shields.io/github/license/IfanID/rout-komik?labelColor=27303D&color=0877d2)](/LICENSE)
 
 ## Download
 
-[![Stable](https://img.shields.io/github/release/komikku-app/komikku.svg?maxAge=3600&label=Stable&labelColor=06599d&color=043b69)](https://github.com/komikku-app/komikku/releases/latest)
-[![Preview](https://img.shields.io/github/v/release/komikku-app/komikku-preview.svg?maxAge=3600&label=Preview&labelColor=2c2c47&color=1c1c39)](https://github.com/komikku-app/komikku-preview/releases/latest)
+[![Latest Release](https://img.shields.io/github/release/IfanID/rout-komik.svg?maxAge=3600&label=Latest&labelColor=06599d&color=043b69)](https://github.com/IfanID/rout-komik/releases/latest)
 
 *Requires Android 8.0 or higher.*
 
@@ -35,7 +31,20 @@ A free and open source manga reader which is based off TachiyomiSY & Mihon/Tachi
 
 ## Features
 
-### Komikku's unique features:
+### Fitur Unggulan Rout:
+- **Sinkronisasi Reader Berbasis Lifecycle**: Sinkronisasi progres baca lintas sumber dipicu saat keluar dari Reader atau saat berpindah bab, sangat menghemat penggunaan CPU & baterai selama membaca.
+- **Pencarian Langsung & Deduplikasi Bab O(N)**: Pencarian bab bersaudara secara langsung via SQL dan deduplikasi berbasis HashMap untuk komik gabungan demi menghilangkan jank/lag pada UI.
+- **Pengalaman Penggabungan Komik (Merged Manga) Yang Disempurnakan**:
+  - Komik mandiri tidak akan hilang saat digabung; komik anak disembunyikan secara rapi hanya ketika komik gabungan induk aktif di Pustaka.
+  - **Kesetiaan Sumber (Source Loyalty)**: Reader tetap mengutamakan satu situs/sumber yang sama sepanjang sesi membaca untuk mencegah lompatan antar situs.
+  - **Lompat Otomatis (Dynamic Skip)**: Otomatis melompati bab duplikat dari sumber lain yang sudah dibaca saat scrolling.
+- **Pengaturan Bawaan Optimal**: Pengaturan awal yang disesuaikan untuk kenyamanan membaca (Tab Daftar Konten/Feed sebagai default, Mode Webtoon Strip Panjang, Pembatasan Unduhan Wi-Fi dinonaktifkan, Grid Pustaka 4 Kolom Nyaman, dll.).
+- **Ukuran APK Lebih Ringkas**: Pembersihan paket bahasa yang tidak terpakai untuk memperkecil ukuran aplikasi.
+
+<details>
+  <summary>Features from Komikku</summary>
+
+#### Features from Komikku:
 - `Suggestions` automatically showing source-website's recommendations / suggestions / related to current entry for all sources.
 - `Hidden categories` to hide yours things from *nosy* people.
 - `Auto theme color` based on each entry's cover for entry View & Reader.
@@ -64,6 +73,8 @@ A free and open source manga reader which is based off TachiyomiSY & Mihon/Tachi
 - Forked from SY so everything from SY.
 - Always up-to-date with Mihon & SY
 - More app themes & better UI, improvements...
+
+</details>
 
 
 <details>
@@ -177,11 +188,11 @@ See [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md).
 
 Thank you to all the people who have contributed!
 
-<a href="https://github.com/komikku-app/komikku/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=komikku-app/komikku" alt="Komikku app contributors" title="Komikku app contributors" width="800"/>
+<a href="https://github.com/IfanID/rout-komik/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=IfanID/rout-komik" alt="Rout app contributors" title="Rout app contributors" width="800"/>
 </a>
 
-![Visitor Count](https://count.getloli.com/get/@komikku-app?theme=capoo-2)
+![Visitor Count](https://count.getloli.com/get/@rout-komik?theme=capoo-2)
 
 ### Disclaimer
 

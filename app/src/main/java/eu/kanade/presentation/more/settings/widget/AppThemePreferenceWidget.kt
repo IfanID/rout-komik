@@ -86,6 +86,7 @@ private fun AppThemesList(
             .filterNot { it.titleRes == null }
     }
 
+    // Rout -->
     if (isGrid) {
         Column(
             modifier = Modifier
@@ -140,6 +141,7 @@ private fun AppThemesList(
             }
         }
     } else {
+        // Rout <--
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth(),

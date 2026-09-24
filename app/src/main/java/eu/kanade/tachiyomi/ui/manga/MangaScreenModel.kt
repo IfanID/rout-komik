@@ -798,13 +798,14 @@ class MangaScreenModel(
             // SY -->
             reference.mangaId?.let { childId ->
                 updateManga.awaitUpdateFavorite(childId, true)
+                // Rout -->
                 logcat(LogPriority.DEBUG) { "[RoutDebug] Memulihkan status favorit komik anak (ID: $childId) setelah menghapus referensi penggabungannya" }
+                // Rout <--
             }
             // SY <--
             deleteMergeById.await(reference.id)
         }
     }
-    // SY <--
 
     // Manga info - start
 
@@ -844,7 +845,9 @@ class MangaScreenModel(
                     references.forEach { reference ->
                         reference.mangaId?.let { childId ->
                             updateManga.awaitUpdateFavorite(childId, true)
+                            // Rout -->
                             logcat(LogPriority.DEBUG) { "[RoutDebug] Memulihkan status favorit komik anak (ID: $childId) setelah menghapus favorit komik gabungan ${manga.id}" }
+                            // Rout <--
                         }
                     }
                 }
@@ -852,7 +855,9 @@ class MangaScreenModel(
                 // Remove from library
                 if (updateManga.awaitUpdateFavorite(manga.id, false)) {
                     val sourceName = sourceManager.getOrStub(manga.source).name
+                    // Rout -->
                     logcat(LogPriority.DEBUG) { "[RoutDebug] Komik '${manga.title}' ($sourceName) dihapus dari pustaka melalui Detail" }
+                    // Rout <--
                     // Remove covers and update last modified in db
                     if (manga.removeCovers() != manga) {
                         updateManga.awaitUpdateCoverLastModified(manga.id)
@@ -878,7 +883,9 @@ class MangaScreenModel(
                     // Default category set
                     defaultCategory != null -> {
                         val sourceName = sourceManager.getOrStub(manga.source).name
+                        // Rout -->
                         logcat(LogPriority.DEBUG) { "[RoutDebug] Menambahkan komik '${manga.title}' ($sourceName) ke pustaka melalui Detail" }
+                        // Rout <--
                         val result = updateManga.awaitUpdateFavorite(manga.id, true)
                         if (!result) return@launchIO
                         moveMangaToCategory(defaultCategory)
@@ -887,7 +894,9 @@ class MangaScreenModel(
                     // Automatic 'Default' or no categories
                     defaultCategoryId == 0L || categories.isEmpty() -> {
                         val sourceName = sourceManager.getOrStub(manga.source).name
+                        // Rout -->
                         logcat(LogPriority.DEBUG) { "[RoutDebug] Menambahkan komik '${manga.title}' ($sourceName) ke pustaka melalui Detail" }
+                        // Rout <--
                         val result = updateManga.awaitUpdateFavorite(manga.id, true)
                         if (!result) return@launchIO
                         moveMangaToCategory(null)

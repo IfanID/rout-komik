@@ -119,6 +119,7 @@ import tachiyomi.domain.storage.service.StorageManager.Companion.directoryAccess
 import tachiyomi.domain.storage.service.StoragePreferences
 import tachiyomi.i18n.MR
 import tachiyomi.i18n.kmk.KMR
+import tachiyomi.i18n.rout.RMR
 import tachiyomi.i18n.sy.SYMR
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.util.collectAsState
@@ -231,6 +232,7 @@ object SettingsDataScreen : SearchableSettings {
         } ?: stringResource(MR.strings.invalid_location, storageDir)
     }
 
+    // Rout -->
     private class OpenDocumentTreeWithHintSettings : ActivityResultContracts.OpenDocumentTree() {
         override fun createIntent(context: Context, input: Uri?): Intent {
             val intent = super.createIntent(context, input)
@@ -269,6 +271,7 @@ object SettingsDataScreen : SearchableSettings {
             Log.e("RoutDebug", "Error saat menyiapkan folder secara fisik", e)
         }
     }
+    // Rout <--
 
     @Composable
     private fun getStorageLocationPref(
@@ -330,7 +333,7 @@ object SettingsDataScreen : SearchableSettings {
                 },
                 title = {
                     Text(
-                        text = stringResource(KMR.strings.onboarding_storage_permission_dialog_title),
+                        text = stringResource(RMR.strings.onboarding_storage_permission_dialog_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
@@ -343,7 +346,7 @@ object SettingsDataScreen : SearchableSettings {
                         horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
                     ) {
                         Text(
-                            text = stringResource(KMR.strings.onboarding_storage_permission_dialog_desc, tempFolderName),
+                            text = stringResource(RMR.strings.onboarding_storage_permission_dialog_desc, tempFolderName),
                             style = MaterialTheme.typography.bodyLarge,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                             lineHeight = 22.sp,
@@ -436,7 +439,7 @@ object SettingsDataScreen : SearchableSettings {
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = stringResource(KMR.strings.onboarding_storage_kmk_info),
+                        text = stringResource(RMR.strings.onboarding_storage_rout_info),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
@@ -464,7 +467,7 @@ object SettingsDataScreen : SearchableSettings {
                             if (!isEditingFolder) {
                                 Column(horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally) {
                                     Text(
-                                        text = if (isLocked) stringResource(KMR.strings.onboarding_storage_folder_name_label_created) else stringResource(KMR.strings.onboarding_storage_folder_name_label),
+                                        text = if (isLocked) stringResource(RMR.strings.onboarding_storage_folder_name_label_created) else stringResource(RMR.strings.onboarding_storage_folder_name_label),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = if (isLocked) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary,
                                         letterSpacing = 2.sp,
@@ -497,7 +500,7 @@ object SettingsDataScreen : SearchableSettings {
                                 OutlinedTextField(
                                     value = tempFolderName,
                                     onValueChange = { tempFolderName = it },
-                                    label = { Text(stringResource(KMR.strings.onboarding_storage_folder_name_hint)) },
+                                    label = { Text(stringResource(RMR.strings.onboarding_storage_folder_name_hint)) },
                                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                                     singleLine = true,
                                     textStyle = MaterialTheme.typography.bodyLarge.copy(

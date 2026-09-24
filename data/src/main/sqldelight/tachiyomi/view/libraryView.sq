@@ -43,6 +43,7 @@ LEFT JOIN (
 ) AS MC
 ON MC.manga_id = M._id
 WHERE M.source <> 6969
+-- Rout -->
 AND NOT EXISTS (
     SELECT 1
     FROM merged
@@ -52,6 +53,7 @@ AND NOT EXISTS (
     AND parent.source = 6969
     AND parent._id <> M._id
 )
+-- Rout <--
 UNION
 SELECT
     M.*,

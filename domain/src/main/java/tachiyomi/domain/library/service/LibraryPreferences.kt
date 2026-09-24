@@ -30,7 +30,9 @@ class LibraryPreferences(
 
     fun randomSortSeed() = preferenceStore.getInt("library_random_sort_seed", 0)
 
+    // Rout -->
     fun portraitColumns() = preferenceStore.getInt("pref_library_columns_portrait_key", 4)
+    // Rout <--
 
     fun landscapeColumns() = preferenceStore.getInt("pref_library_columns_landscape_key", 0)
 

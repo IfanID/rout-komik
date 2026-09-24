@@ -22,16 +22,16 @@ Before `git push`, confirm the current branch is not `master` or `main` (`git br
 
 | String kind | Module | Resource class | Base folder only |
 |-------------|--------|----------------|------------------|
+| Rout-only (Rout features, SAF automation, Rout UI, custom storage, etc.) | `i18n-rout/` | **`RMR`** | `i18n-rout/src/commonMain/moko-resources/base/` |
 | Komikku-only (new features, KMK UI, library-update errors, WebDAV, Discord, etc.) | `i18n-kmk/` | **`KMR`** | `i18n-kmk/src/commonMain/moko-resources/base/` |
 | Shared Mihon / upstream behavior | `i18n/` | **`MR`** | `i18n/src/commonMain/moko-resources/base/` |
 | TachiyomiSY-only | `i18n-sy/` | **`SYMR`** | `i18n-sy/src/commonMain/moko-resources/base/` |
 
 **Hard rules:**
 
-- **Never** add Komikku-specific strings to `i18n/` or `i18n-sy/`.
-- **Never** edit non-`base` locale `strings.xml` or `plurals.xml` files in `i18n-kmk/`, `i18n/`, or `i18n-sy/` (Weblate owns translations).
-- Import: `import tachiyomi.i18n.kmk.KMR` for Komikku strings.
-- If a change is inside `// KMK -->` … `// KMK <--` or adds Komikku-only behavior, default to **`KMR` + `i18n-kmk`**.
+- **Never** add Rout-specific strings to `i18n/`, `i18n-kmk/`, or `i18n-sy/`.
+- Import: `import tachiyomi.i18n.rout.RMR` for Rout strings.
+- If a change is inside `// Rout -->` … `// Rout <--` or adds Rout-only behavior, default to **`RMR` + `i18n-rout`**.
 
 **Self-check before finishing:** `git diff` must not add new `<string name="…">` or `<plurals name="…">` entries under non-`base` locales in `i18n-kmk/src/`, `i18n/src/`, or `i18n-sy/src/`.
 
@@ -172,9 +172,10 @@ JDK **17**.
 Preserve inline blocks when editing:
 
 ```kotlin
+// Rout --> … // Rout <--   Rout (new features/fixes exclusive to Rout)
 // KMK -->  … // KMK <--   Komikku
 // SY -->   … // SY <--    TachiyomiSY
-// EXH -->  … // EXH <--   E-Hentai / exh (existing); prefer KMK for new Komikku-only code
+// EXH -->  … // EXH <--   E-Hentai / exh (existing)
 ```
 
 Package roots: `eu.kanade.tachiyomi.*` (legacy UI), `tachiyomi.*` (domain/data), `mihon.*` (Mihon upstream), `exh.*` (enhanced sources).

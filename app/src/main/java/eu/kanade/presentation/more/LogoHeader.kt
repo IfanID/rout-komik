@@ -21,6 +21,7 @@ fun LogoHeader() {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         // KMK -->
+        // Rout -->
         Image(
             painter = painterResource(R.drawable.rout_transparan),
             contentDescription = null,
@@ -29,6 +30,7 @@ fun LogoHeader() {
                 .padding(vertical = 48.dp)
                 .height(80.dp),
         )
+        // Rout <--
         // KMK <--
 
         HorizontalDivider()

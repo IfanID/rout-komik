@@ -395,10 +395,10 @@ class ReaderViewModel @JvmOverloads constructor(
     override fun onCleared() {
         val currentChapters = state.value.viewerChapters
         if (currentChapters != null) {
-            // KMK -->
+            // Rout -->
             logcat(LogPriority.DEBUG) { "[RoutDebug] Keluar dari Reader, menjalankan flush progres terakhir" }
             flushCrossSourceProgress()
-            // KMK <--
+            // Rout <--
             currentChapters.unref()
             chapterToDownload?.let {
                 downloadManager.addDownloadsToStartOfQueue(listOf(it))
@@ -618,6 +618,7 @@ class ReaderViewModel @JvmOverloads constructor(
     }
 
     // KMK -->
+    // Rout -->
     private fun flushCrossSourceProgress() {
         if (manga?.source != MERGED_SOURCE_ID) return
         val currentChapter = state.value.viewerChapters?.currChapter ?: return
@@ -637,6 +638,7 @@ class ReaderViewModel @JvmOverloads constructor(
             }
         }
     }
+    // Rout <--
     // KMK <--
 
     /**

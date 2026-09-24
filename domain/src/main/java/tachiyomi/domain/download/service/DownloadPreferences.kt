@@ -6,10 +6,12 @@ class DownloadPreferences(
     private val preferenceStore: PreferenceStore,
 ) {
 
+    // Rout -->
     fun downloadOnlyOverWifi() = preferenceStore.getBoolean(
         "pref_download_only_over_wifi_key",
         false,
     )
+    // Rout <--
 
     fun saveChaptersAsCBZ() = preferenceStore.getBoolean("save_chapter_as_cbz", true)
 

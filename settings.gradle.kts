@@ -48,6 +48,9 @@ include(":core:common")
 include(":data")
 include(":domain")
 include(":i18n")
+// Rout -->
+include(":i18n-rout")
+// Rout <--
 // KMK -->
 include(":i18n-kmk")
 include(":flagkit")

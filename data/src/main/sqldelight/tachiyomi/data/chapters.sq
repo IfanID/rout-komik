@@ -50,7 +50,9 @@ BEGIN
     UPDATE mangas SET version = version + 1
     WHERE _id = new.manga_id
       AND (SELECT is_syncing FROM mangas WHERE _id = new.manga_id) = 0
+      -- Rout -->
       AND (new.read != old.read OR new.bookmark != old.bookmark);
+      -- Rout <--
 END;
 
 getChapterById:
@@ -129,6 +131,7 @@ AND (
 ORDER BY C.manga_id, C.source_order;
 -- KMK <--
 
+-- Rout -->
 getMergedChaptersByNumber:
 SELECT C.*
 FROM (
@@ -138,6 +141,7 @@ JOIN chapters C
 ON C.manga_id = M.manga_id
 WHERE C.chapter_number = :chapterNumber
 AND C.manga_id != :excludedMangaId;
+-- Rout <--
 
 getScanlatorsByMergeId:
 SELECT scanlator

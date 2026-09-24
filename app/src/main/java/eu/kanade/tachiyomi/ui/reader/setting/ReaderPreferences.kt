@@ -43,6 +43,7 @@ class ReaderPreferences(
 
     fun keepScreenOn() = preferenceStore.getBoolean("pref_keep_screen_on_key", false)
 
+    // Rout -->
     fun defaultReadingMode() = preferenceStore.getInt(
         "pref_default_reading_mode_key",
         ReadingMode.WEBTOON.flagValue,
@@ -52,6 +53,7 @@ class ReaderPreferences(
         "pref_default_orientation_type_key",
         ReaderOrientation.LOCKED_PORTRAIT.flagValue,
     )
+    // Rout <--
 
     fun webtoonDoubleTapZoomEnabled() = preferenceStore.getBoolean("pref_enable_double_tap_zoom_webtoon", true)
 

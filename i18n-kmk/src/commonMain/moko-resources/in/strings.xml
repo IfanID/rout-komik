@@ -139,12 +139,6 @@
     <string name="auto_update_app">Aplikasi diperbarui otomatis</string>
     <string name="auto_update_app_disable_auto_download">Jangan unduh pembaruan otomatis</string>
     <!-- Onboarding section -->
-    <string name="onboarding_storage_kmk_info">Pilih nama folder untuk menyimpan data aplikasi. Folder ini akan dibuat di dalam direktori Dokumen perangkat Anda.</string>
-    <string name="onboarding_storage_folder_name_label">NAMA FOLDER</string>
-    <string name="onboarding_storage_folder_name_label_created">FOLDER DISIAPKAN</string>
-    <string name="onboarding_storage_folder_name_hint">Masukkan nama folder</string>
-    <string name="onboarding_storage_permission_dialog_title">Izin Diperlukan</string>
-    <string name="onboarding_storage_permission_dialog_desc">Folder \"%1$s\" akan terbuka secara otomatis. Cukup ketuk \'Gunakan folder ini\' untuk memberikan izin akses.</string>
     <string name="onboarding_permission_external_storage">Izin akses file media</string>
     <string name="onboarding_permission_external_storage_description">Izinkan penggunaan sampul khusus di Edit Info entri</string>
     <string name="onboarding_permission_writing_external_storage_description">Izinkan menyimpan sampul &amp; menggunakan sampul khusus di Edit Info entri</string>

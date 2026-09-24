@@ -1655,14 +1655,18 @@ class LibraryScreenModel(
         val toMergeMangas = mergedManga + mergingMangas
         if (toMergeMangas.size <= 1) return null
 
+        // Rout -->
         logcat(LogPriority.DEBUG) { "[RoutDebug] Memulai proses penggabungan untuk ${toMergeMangas.size} komik. Komik target utama: ${toMergeMangas.first().title}" }
+        // Rout <--
 
         var mergingMangaId = toMergeMangas.first().id
         for (manga in toMergeMangas.drop(1)) {
             mergingMangaId = smartSearchMerge.smartSearchMerge(manga, mergingMangaId).id
         }
 
+        // Rout -->
         logcat(LogPriority.DEBUG) { "[RoutDebug] Proses penggabungan berhasil diselesaikan sepenuhnya." }
+        // Rout <--
         return mergingMangaId
     }
     // KMK <--

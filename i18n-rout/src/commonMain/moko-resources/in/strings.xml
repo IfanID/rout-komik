@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Rout custom onboarding & SAF storage section -->
+    <string name="onboarding_storage_rout_info">Pilih nama folder untuk menyimpan data aplikasi. Folder ini akan dibuat di dalam direktori Dokumen perangkat Anda.</string>
+    <string name="onboarding_storage_kmk_info">Pilih nama folder untuk menyimpan data aplikasi. Folder ini akan dibuat di dalam direktori Dokumen perangkat Anda.</string>
+    <string name="onboarding_storage_folder_name_label">NAMA FOLDER</string>
+    <string name="onboarding_storage_folder_name_label_created">FOLDER DISIAPKAN</string>
+    <string name="onboarding_storage_folder_name_hint">Masukkan nama folder</string>
+    <string name="onboarding_storage_permission_dialog_title">Izin Diperlukan</string>
+    <string name="onboarding_storage_permission_dialog_desc">Folder \"%1$s\" akan terbuka secara otomatis. Cukup ketuk \'Gunakan folder ini\' untuk memberikan izin akses.</string>
+</resources>

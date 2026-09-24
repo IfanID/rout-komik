@@ -158,7 +158,7 @@ class SetReadStatus(
     }
     // SY <--
 
-    // KMK -->
+    // Rout -->
     suspend fun awaitProgressSync(
         mangaId: Long,
         chapterNumber: Double,
@@ -198,6 +198,7 @@ class SetReadStatus(
         }
         Result.Success
     }
+    // Rout <--
     // KMK <--
 
     sealed interface Result {
