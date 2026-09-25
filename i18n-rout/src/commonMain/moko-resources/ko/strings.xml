@@ -2,7 +2,7 @@
 <resources>
     <!-- Rout custom onboarding & SAF storage section -->
     <string name="onboarding_storage_rout_info">앱 데이터를 저장할 폴더 이름을 선택하세요. 이 폴더는 기기의 문서(Documents) 디렉토리 내에 생성됩니다.</string>
-    <string name="onboarding_storage_kmk_info">앱 데이터를 저장할 폴더 이름을 선택하세요. 이 폴더는 기기의 문서(Documents) 디렉토리 내에 생성됩니다.</string>
+    <string name="settings_storage_rout_info">기기의 문서(Documents) 디렉토리 내에서 앱 데이터 저장소 폴더 이름을 변경하려면 폴더 이름을 선택하세요.</string>
     <string name="onboarding_storage_folder_name_label">폴더 이름</string>
     <string name="onboarding_storage_folder_name_label_created">폴더 준비됨</string>
     <string name="onboarding_storage_folder_name_hint">폴더 이름 입력</string>

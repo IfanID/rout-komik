@@ -439,7 +439,7 @@ object SettingsDataScreen : SearchableSettings {
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = stringResource(RMR.strings.onboarding_storage_rout_info),
+                        text = stringResource(RMR.strings.settings_storage_rout_info),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,

@@ -1,6 +1,6 @@
 # Komikku – AI Agent Guide
 
-Komikku is an Android manga reader (min SDK 26, target SDK 36, JVM 17 / Kotlin) forked from **Mihon** + **TachiyomiSY**. Stack: Jetpack Compose + Material3, Voyager navigation, SQLDelight, Injekt DI. `applicationId`: `app.komikku`.
+Komikku is an Android manga reader (min SDK 31, target SDK 36, JVM 17 / Kotlin) forked from **Mihon** + **TachiyomiSY**. Stack: Jetpack Compose + Material3, Voyager navigation, SQLDelight, Injekt DI. `applicationId`: `app.komikku`.
 
 ---
 
@@ -32,6 +32,7 @@ Before `git push`, confirm the current branch is not `master` or `main` (`git br
 - **Never** add Rout-specific strings to `i18n/`, `i18n-kmk/`, or `i18n-sy/`.
 - Import: `import tachiyomi.i18n.rout.RMR` for Rout strings.
 - If a change is inside `// Rout -->` … `// Rout <--` or adds Rout-only behavior, default to **`RMR` + `i18n-rout`**.
+- For **`i18n-rout`**, always keep all 3 supported locales updated together: `base/` (default/English), `in/` (Indonesian), and `ko/` (Korean).
 
 **Self-check before finishing:** `git diff` must not add new `<string name="…">` or `<plurals name="…">` entries under non-`base` locales in `i18n-kmk/src/`, `i18n/src/`, or `i18n-sy/src/`.
 
